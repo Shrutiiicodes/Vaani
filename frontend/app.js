@@ -4,6 +4,13 @@ let isRecording = false;
 let currentLanguage = "hindi";
 let conversation = [];
 let currentActiveFormType = null;
+let sessionId = sessionStorage.getItem("bankingSessionId");
+if (!sessionId) {
+    sessionId = crypto.randomUUID();
+    sessionStorage.setItem("bankingSessionId", sessionId);
+}
+
+const API_KEY = "secretkey123";  // must match .env
 
 // ── Union Bank of India — Reference Rates ──────────────────────────────────
 const LOAN_RATES = [
@@ -293,6 +300,7 @@ async function stopRecording() {
 
 async function processCustomerAudio(blob) {
     const formData = new FormData();
+    formData.append("session_id", sessionId);
     formData.append("audio", blob, "audio.webm");
     formData.append("conversation", JSON.stringify(conversation));
     if (currentActiveFormType) {
@@ -301,7 +309,7 @@ async function processCustomerAudio(blob) {
     document.getElementById("status").className = "status processing";
 
     try {
-        const res = await fetch("/api/customer-speak", { method: "POST", body: formData });
+        const res = await fetch("/api/customer-speak", { method: "POST", headers: { "X-Api-Key": API_KEY }, body: formData });
         const data = await res.json();
 
         if (data.detail) {
@@ -336,7 +344,11 @@ async function processCustomerAudio(blob) {
             // ── 2. Handle Intent & Guide ──
             if (data.intent && data.intent !== "other") {
                 document.getElementById("intent-box").style.display = "block";
-                document.getElementById("intent-text").textContent = (data.intent || "").replace(/_/g, " ").toUpperCase();
+                const intentLabel = (data.intent || "").replace(/_/g, " ").toUpperCase();
+                const confidencePct = data.confidence
+                    ? ` (${Math.round(data.confidence * 100)}%)`
+                    : "";
+                document.getElementById("intent-text").textContent = intentLabel + confidencePct;
             } else {
                 document.getElementById("intent-box").style.display = "none";
             }
@@ -385,8 +397,8 @@ async function sendReply() {
     try {
         const res = await fetch("/api/staff-reply", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ reply_text: replyText, target_language: currentLanguage })
+            headers: { "Content-Type": "application/json", "X-Api-Key": API_KEY },
+            body: JSON.stringify({ reply_text: replyText, target_language: currentLanguage, session_id: sessionId })
         });
         const data = await res.json();
         document.getElementById("reply-translated").textContent = `Translated: ${data.translated_reply}`;
@@ -408,7 +420,7 @@ async function generateSummary() {
     try {
         const res = await fetch("/api/summary", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json", "X-Api-Key": API_KEY },
             body: JSON.stringify({ conversation, customer_language: currentLanguage })
         });
         const data = await res.json();
@@ -436,3 +448,24 @@ function addLog(role, language, original, translation) {
 }
 
 function setStatus(msg) { document.getElementById("status").textContent = msg; }
+
+async function restoreSession() {
+    try {
+        const res = await fetch(`/api/session/${sessionId}`);
+        const data = await res.json();
+        if (data.turns && data.turns.length > 0) {
+            conversation = data.turns.map(t => ({
+                role: t.role, text: t.text, language: t.language
+            }));
+            data.turns.forEach(t => {
+                addLog(t.role, t.language, t.text, t.translated || "");
+            });
+            setStatus(`Session restored (${data.turns.length} turns)`);
+        }
+    } catch (e) {
+        console.log("No prior session found");
+    }
+}
+
+// Call on load
+restoreSession();

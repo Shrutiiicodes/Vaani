@@ -4,3 +4,9 @@ python-multipart
 groq
 gtts
 python-dotenv
+sqlalchemy
+aiosqlite
+slowapi
+pytest
+pytest-asyncio
+httpx

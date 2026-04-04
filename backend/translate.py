@@ -1,4 +1,5 @@
 import os, json, re, math
+from models import LLMTranslationOutput
 from groq import Groq
 from dotenv import load_dotenv
 from banking_context import BANKING_SYSTEM_PROMPT, INTENT_CATEGORIES, PROCESS_GUIDES, COUNTERS, FORM_TEMPLATES, BANK_RATES
@@ -92,14 +93,29 @@ Respond ONLY with a JSON object (no markdown):
 
     try:
         raw_res = response.choices[0].message.content
-        result = json.loads(_strip_fences(raw_res))
-    except Exception as e:
-        print(f"FAILED TO PARSE LLM JSON: {e}\nRAW: {raw_res}")
-        result = {"english_translation": text, "intent": "other", "confidence": 0.5, "suggested_counter": "inquiry_desk", "entities": {}, "calculation_inputs": {"type": "none"}}
+        parsed_json = json.loads(_strip_fences(raw_res))
 
-    intent = result.get("intent", "other")
-    confidence = result.get("confidence", 1.0)
-    english = result.get("english_translation", text)
+        # Clean any number fields the LLM may have returned as strings
+        calc = parsed_json.get("calculation_inputs", {})
+        for field in ("p", "n", "income"):
+            if field in calc:
+                calc[field] = clean_number(calc[field])
+        parsed_json["calculation_inputs"] = calc
+
+        # Validate with Pydantic — raises ValidationError with clear field-level errors
+        validated = LLMTranslationOutput(**parsed_json)
+        result = validated.dict()
+
+    except json.JSONDecodeError as e:
+        print(f"JSON PARSE FAILED: {e}\nRAW: {raw_res}")
+        result = LLMTranslationOutput(english_translation=text).dict()
+
+    except Exception as e:
+        print(f"LLM VALIDATION ERROR: {e}\nRAW: {raw_res}")
+        result = LLMTranslationOutput(english_translation=text).dict()
+        intent = result.get("intent", "other")
+        confidence = result.get("confidence", 1.0)
+        english = result.get("english_translation", text)
 
     # Calculation logic using BANK_RATES
     calcs = result.get("calculation_inputs", {})
@@ -157,9 +173,9 @@ Respond ONLY with a JSON object (no markdown):
 
 def perform_calculations(inputs: dict) -> dict:
     calc_type = inputs.get("type")
-    p = float(inputs.get("p") or 0)
-    n = float(inputs.get("n") or 0)  # tenure in months
-    income = float(inputs.get("income") or 0)
+    p = clean_number(inputs.get("p"))
+    n = clean_number(inputs.get("n"))  # tenure in months
+    income = clean_number(inputs.get("income"))
     cat = (inputs.get("loan_category") or "default").lower().replace(" ", "_")
     
     results = {"type": calc_type}
@@ -225,3 +241,31 @@ async def generate_summary(conversation: list, customer_language: str) -> dict:
     prompt = f"Summarize in English and {customer_language} (JSON keys english_summary, vernacular_summary): {convo_text}"
     response = client.chat.completions.create(model=MODEL, messages=[{"role": "user", "content": prompt}], temperature=0.2)
     return json.loads(_strip_fences(response.choices[0].message.content))
+
+def clean_number(val) -> float:
+    """Strips currency symbols, commas, spaces before casting to float.
+    Handles: '₹50,000', '1,00,000', '50k', '$1200', '  30  '
+    Returns 0.0 if unparseable.
+    """
+    if val is None:
+        return 0.0
+    if isinstance(val, (int, float)):
+        return float(val)
+    val = str(val).strip().lower()
+    # Handle shorthand: 50k → 50000, 1.5l → 150000
+    if val.endswith('k'):
+        try:
+            return float(val[:-1]) * 1_000
+        except ValueError:
+            pass
+    if val.endswith('l'):
+        try:
+            return float(val[:-1]) * 1_00_000
+        except ValueError:
+            pass
+    # Strip everything except digits and decimal point
+    val = re.sub(r'[^\d.]', '', val)
+    try:
+        return float(val)
+    except ValueError:
+        return 0.0
