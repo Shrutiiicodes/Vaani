@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PS6 — Branch Voice Assistant</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+</head>
+
+<body>
+    <div class="header">
+        <div class="logo"><span class="material-symbols-outlined">account_balance</span> Union Bank — Branch Voice
+            Assistant</div>
+        <div class="lang-badge" id="detected-lang">Waiting for customer...</div>
+    </div>
+    <div class="page-wrapper">
+        <div class="main-grid">
+            <!-- Left: Customer panel -->
+            <div class="panel customer-panel">
+                <div class="panel-title">Customer</div>
+                <div class="transcript-box" id="customer-transcript">
+                    Customer speech will appear here...
+                </div>
+
+                <!-- Clarification card – shown when request is ambiguous -->
+                <div class="clarification-box" id="clarification-box" style="display:none">
+                    <div class="clarification-header">
+                        <span class="material-symbols-outlined">help</span>
+                        Clarification Needed
+                    </div>
+                    <div class="clarification-q" id="clarification-q-en"></div>
+                    <div class="clarification-q vernacular" id="clarification-q-vern"></div>
+                </div>
+
+                <button class="mic-btn" id="mic-btn" onclick="toggleRecording()">
+                    <span class="material-symbols-outlined">mic</span> Hold to Speak
+                </button>
+                <div class="status" id="status">Ready</div>
+            </div>
+
+            <div class="panel translation-panel">
+                <div class="panel-header-row">
+                    <div class="panel-title">Staff Dashboard</div>
+                    <div class="counter-badge" id="counter-badge" style="display:none">
+                        <span class="material-symbols-outlined">directions_walk</span>
+                        <span id="counter-name">Inquiry Desk</span>
+                    </div>
+                </div>
+                <div class="transcript-box" id="english-translation">
+                    Translation will appear here...
+                </div>
+                <div class="intent-box" id="intent-box" style="display:none">
+                    <span class="intent-label">Detected intent:</span>
+                    <span id="intent-text"></span>
+                </div>
+
+                <!-- Calculation Results Area -->
+                <div class="calc-container" id="calc-container" style="display:none">
+                    <!-- Populated by JS -->
+                </div>
+
+                <!-- Pre-filled Form Context -->
+                <div class="form-container" id="form-container" style="display:none">
+                    <div class="form-header-row" onclick="toggleFormCollapse()">
+                        <div class="form-title">
+                            <span class="material-symbols-outlined">description</span>
+                            Pre-filled <span id="form-type-name">Form</span>
+                        </div>
+                        <span class="material-symbols-outlined collapse-icon">expand_more</span>
+                    </div>
+                    <div class="form-body" id="form-body">
+                        <div id="form-fields-grid" class="form-fields-grid"></div>
+                        <button class="print-btn" onclick="printForm()">
+                            <span class="material-symbols-outlined">print</span> Print Form
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Staff reply panel -->
+            <div class="panel reply-panel">
+                <div class="panel-title">Staff Reply</div>
+                <textarea id="staff-reply" placeholder="Type your reply in English..."></textarea>
+                <button class="send-btn" onclick="sendReply()">Send & Speak to Customer</button>
+                <div class="reply-translated" id="reply-translated"></div>
+                <div class="process-guide" id="process-guide" style="display:none">
+                    <div class="guide-title"><span class="material-symbols-outlined">assignment</span> Process Guide
+                    </div>
+                    <ol id="guide-steps"></ol>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Financial Info Panel (employee only) ── -->
+        <div class="fin-panel" id="fin-panel" style="display:none">
+
+            <!-- LOAN RATES -->
+            <div id="fin-loan" style="display:none">
+                <div class="fin-header">
+                    <span class="material-symbols-outlined">account_balance_wallet</span>
+                    Union Bank — Loan Interest Rates (p.a.)
+                </div>
+                <div class="loan-chart" id="loan-chart">
+                    <!-- Populated by JS -->
+                </div>
+                <div class="fin-note">* Rates are indicative and subject to CIBIL score &amp; tenure. Senior citizens /
+                    women borrowers may get additional concessions.</div>
+            </div>
+
+            <!-- FD / RD RATES -->
+            <div id="fin-fdrd" style="display:none">
+                <div class="fin-header">
+                    <span class="material-symbols-outlined">savings</span>
+                    Union Bank — FD &amp; RD Interest Rates (p.a.)
+                </div>
+                <div class="fdrd-grid">
+                    <div class="fd-block">
+                        <div class="fd-block-title">Fixed Deposit (General)</div>
+                        <table class="rate-table" id="fd-table">
+                            <!-- Populated by JS -->
+                        </table>
+                    </div>
+                    <div class="fd-block">
+                        <div class="fd-block-title">Recurring Deposit</div>
+                        <div class="rd-info">
+                            <div class="rd-row"><span>Interest Rate</span><span>Same as FD for chosen tenure</span>
+                            </div>
+                            <div class="rd-row"><span>Minimum Instalment</span><span>₹ 100 / month</span></div>
+                            <div class="rd-row"><span>Tenure Range</span><span>6 months – 10 years</span></div>
+                            <div class="rd-row"><span>Premature Closure</span><span>Allowed (with penalty)</span></div>
+                            <div class="rd-row"><span>Senior Citizen Benefit</span><span>+0.50% extra</span></div>
+                            <div class="rd-row"><span>Nomination</span><span>Available</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="fin-note">* Senior citizens get 0.50% additional on all tenures. Rates effective as on
+                    current
+                    quarter.</div>
+            </div>
+
+        </div>
+
+        <!-- Session log -->
+        <div class="session-log">
+            <div class="log-title">Session Log</div>
+            <div id="log-entries"></div>
+            <button class="summary-btn" onclick="generateSummary()">
+                <span class="material-symbols-outlined">summarize</span> Generate Session Summary
+            </button>
+        </div>
+    </div>
+
+    <!-- Summary modal -->
+    <div class="summary-modal" id="summary-modal" style="display:none">
+        <div class="summary-content">
+            <div class="summary-title">Session Summary</div>
+            <div class="summary-section">
+                <div class="summary-label">English (Bank Record)</div>
+                <div id="summary-english"></div>
+            </div>
+            <div class="summary-section">
+                <div class="summary-label" id="summary-lang-label">Vernacular</div>
+                <div id="summary-vernacular"></div>
+            </div>
+            <button onclick="closeSummary()">Close</button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
