@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
 from typing import Optional, Literal
 
 class TranslateRequest(BaseModel):
@@ -15,7 +15,7 @@ class TranslateResponse(BaseModel):
 class StaffReplyRequest(BaseModel):
     reply_text: str
     target_language: str
-    session_id: str=None
+    session_id: Optional[str] = None
 
 class StaffReplyResponse(BaseModel):
     translated_reply: str
@@ -39,13 +39,14 @@ class CalculationInputs(BaseModel):
 class LLMTranslationOutput(BaseModel):
     english_translation: str
     intent: str = "other"
-    confidence: float = Field(default=0.5, ge=0.0, le=1.0)
+    confidence: float = Field(default=0.5)
     suggested_counter: str = "inquiry_desk"
     entities: dict = {}
     calculation_inputs: CalculationInputs = Field(default_factory=CalculationInputs)
 
-    @validator("intent")
-    def intent_must_be_valid(cls, v):
+    @field_validator("intent", mode="before")
+    @classmethod
+    def intent_must_be_valid(cls, v: str) -> str:
         valid = [
             "account_opening", "balance_enquiry", "fd_rd_enquiry",
             "loan_enquiry", "kyc_update", "complaint", "fund_transfer",
@@ -55,12 +56,14 @@ class LLMTranslationOutput(BaseModel):
         ]
         return v if v in valid else "other"
 
-    @validator("confidence")
-    def clamp_confidence(cls, v):
-        return max(0.0, min(1.0, float(v)))
+    @field_validator("confidence", mode="before")
+    @classmethod
+    def clamp_confidence(cls, v: float) -> float:
+        return max(0.0, min(1.0, v))
 
-    @validator("suggested_counter")
-    def counter_must_be_valid(cls, v):
+    @field_validator("suggested_counter", mode="before")
+    @classmethod
+    def counter_must_be_valid(cls, v: str) -> str:
         valid = [
             "inquiry_desk", "cash_counter", "service_counter",
             "investment_counter", "specialized_counter",

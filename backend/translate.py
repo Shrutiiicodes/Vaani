@@ -1,8 +1,8 @@
 import os, json, re, math
-from models import LLMTranslationOutput
+from .models import LLMTranslationOutput
 from groq import Groq
 from dotenv import load_dotenv
-from banking_context import BANKING_SYSTEM_PROMPT, INTENT_CATEGORIES, PROCESS_GUIDES, COUNTERS, FORM_TEMPLATES, BANK_RATES
+from .banking_context import BANKING_SYSTEM_PROMPT, INTENT_CATEGORIES, PROCESS_GUIDES, COUNTERS, FORM_TEMPLATES, BANK_RATES
 
 load_dotenv()
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
@@ -42,7 +42,7 @@ def _is_money_ambiguous(text: str, intent: str, confidence: float) -> bool:
     return False
 
 
-async def translate_customer_speech(text: str, source_lang: str, conversation_history: list = None, active_form_type: str = None) -> dict:
+async def translate_customer_speech(text: str, source_lang: str, conversation_history: list | None = None, active_form_type: str | None = None) -> dict:
     convo_context = ""
     if conversation_history:
         valid_turns = [t for t in conversation_history if t.get('text')]
@@ -91,8 +91,9 @@ Respond ONLY with a JSON object (no markdown):
         temperature=0.1
     )
 
+    raw_res: str = ""
     try:
-        raw_res = response.choices[0].message.content
+        raw_res = response.choices[0].message.content or ""
         parsed_json = json.loads(_strip_fences(raw_res))
 
         # Clean any number fields the LLM may have returned as strings
@@ -113,9 +114,11 @@ Respond ONLY with a JSON object (no markdown):
     except Exception as e:
         print(f"LLM VALIDATION ERROR: {e}\nRAW: {raw_res}")
         result = LLMTranslationOutput(english_translation=text).dict()
-        intent = result.get("intent", "other")
-        confidence = result.get("confidence", 1.0)
-        english = result.get("english_translation", text)
+
+    # Extract key fields from result — always defined regardless of which branch ran
+    intent: str = result.get("intent", "other")
+    confidence: float = result.get("confidence", 0.5)
+    english: str = result.get("english_translation", text)
 
     # Calculation logic using BANK_RATES
     calcs = result.get("calculation_inputs", {})
@@ -188,7 +191,7 @@ def perform_calculations(inputs: dict) -> dict:
             mr = r / 12 / 100
             emi = p * mr * math.pow(1 + mr, n) / (math.pow(1 + mr, n) - 1)
             results["emi"] = round(emi)
-            results["total_payment"] = round(emi * n)
+            results["total_payment"] = int(results["emi"]) * int(n)
             results["total_interest"] = round(results["total_payment"] - p)
             results["rate_used"] = r
 
@@ -227,20 +230,20 @@ def perform_calculations(inputs: dict) -> dict:
 async def translate_staff_reply(reply: str, target_lang: str) -> str:
     prompt = f"Translate staff reply: {reply} to {target_lang}. Respond with ONLY translation."
     response = client.chat.completions.create(model=MODEL, messages=[{"role": "user", "content": prompt}], temperature=0.1)
-    return response.choices[0].message.content.strip()
+    return (response.choices[0].message.content or "").strip()
 
 
 async def translate_text(text: str, target_lang: str) -> str:
     if not target_lang or target_lang.lower() in ("english", "en"): return text
     response = client.chat.completions.create(model=MODEL, messages=[{"role": "user", "content": f"Translate to {target_lang}: {text}"}], temperature=0.1)
-    return response.choices[0].message.content.strip()
+    return (response.choices[0].message.content or "").strip()
 
 
 async def generate_summary(conversation: list, customer_language: str) -> dict:
     convo_text = "\n".join([f"{turn['role'].upper()}: {turn['text']}" for turn in conversation])
     prompt = f"Summarize in English and {customer_language} (JSON keys english_summary, vernacular_summary): {convo_text}"
     response = client.chat.completions.create(model=MODEL, messages=[{"role": "user", "content": prompt}], temperature=0.2)
-    return json.loads(_strip_fences(response.choices[0].message.content))
+    return json.loads(_strip_fences(response.choices[0].message.content or ""))
 
 def clean_number(val) -> float:
     """Strips currency symbols, commas, spaces before casting to float.
