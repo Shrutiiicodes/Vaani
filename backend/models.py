@@ -70,3 +70,6 @@ class LLMTranslationOutput(BaseModel):
             "operational_supervisor", "branch_manager"
         ]
         return v if v in valid else "inquiry_desk"
+
+class LoginRequest(BaseModel):
+    password: str

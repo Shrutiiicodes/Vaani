@@ -1,8 +1,8 @@
 import os, json, re, math
-from .models import LLMTranslationOutput
+from models import LLMTranslationOutput
 from groq import Groq
 from dotenv import load_dotenv
-from .banking_context import BANKING_SYSTEM_PROMPT, INTENT_CATEGORIES, PROCESS_GUIDES, COUNTERS, FORM_TEMPLATES, BANK_RATES
+from banking_context import BANKING_SYSTEM_PROMPT, INTENT_CATEGORIES, PROCESS_GUIDES, COUNTERS, FORM_TEMPLATES, BANK_RATES
 
 load_dotenv()
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
@@ -105,15 +105,15 @@ Respond ONLY with a JSON object (no markdown):
 
         # Validate with Pydantic — raises ValidationError with clear field-level errors
         validated = LLMTranslationOutput(**parsed_json)
-        result = validated.dict()
+        result = validated.model_dump()
 
     except json.JSONDecodeError as e:
         print(f"JSON PARSE FAILED: {e}\nRAW: {raw_res}")
-        result = LLMTranslationOutput(english_translation=text).dict()
+        result = LLMTranslationOutput(english_translation=text).model_dump()
 
     except Exception as e:
         print(f"LLM VALIDATION ERROR: {e}\nRAW: {raw_res}")
-        result = LLMTranslationOutput(english_translation=text).dict()
+        result = LLMTranslationOutput(english_translation=text).model_dump()
 
     # Extract key fields from result — always defined regardless of which branch ran
     intent: str = result.get("intent", "other")
@@ -191,7 +191,7 @@ def perform_calculations(inputs: dict) -> dict:
             mr = r / 12 / 100
             emi = p * mr * math.pow(1 + mr, n) / (math.pow(1 + mr, n) - 1)
             results["emi"] = round(emi)
-            results["total_payment"] = int(results["emi"]) * int(n)
+            results["total_payment"] = results["emi"] * int(n)
             results["total_interest"] = round(results["total_payment"] - p)
             results["rate_used"] = r
 

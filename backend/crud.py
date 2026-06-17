@@ -1,6 +1,6 @@
 from database import SessionLocal, BankingSession, ConversationTurn, init_db
-import json, uuid, datetime
-
+import json, uuid
+from datetime import datetime, timezone
 
 def get_db():
     db = SessionLocal()
@@ -10,7 +10,7 @@ def get_db():
         db.close()
 
 
-def create_session(db, session_id: str = None, language: str = "hindi") -> BankingSession:
+def create_session(db, session_id: str | None = None, language: str = "hindi") -> BankingSession:
     session_id = session_id or str(uuid.uuid4())
     session = BankingSession(id=session_id, customer_language=language)
     db.add(session)
@@ -31,7 +31,7 @@ def get_or_create_session(db, session_id: str, language: str = "hindi") -> Banki
 
 
 def add_turn(db, session_id: str, role: str, original: str, translated: str,
-             language: str, intent: str = None, confidence: float = None, entities: dict = None):
+             language: str, intent: str | None = None, confidence: float | None = None, entities: dict | None = None):
     turn = ConversationTurn(
         session_id=session_id,
         role=role,
@@ -69,5 +69,4 @@ def update_session_language(db, session_id: str, language: str):
     session = get_session(db, session_id)
     if session:
         session.customer_language = language
-        session.updated_at = datetime.datetime.utcnow()
-        db.commit()
+        session.updated_at = datetime.now(timezone.utc)

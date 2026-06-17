@@ -168,7 +168,16 @@
             <button onclick="closeSummary()">Close</button>
         </div>
     </div>
-
+    <div class="summary-modal" id="login-overlay" style="display:flex">
+        <div class="summary-content" style="max-width:360px">
+            <div class="summary-title">Staff Login</div>
+            <input id="login-pw" type="password" placeholder="Staff password"
+                style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:var(--radius);margin-bottom:8px"
+                onkeydown="if(event.key==='Enter')doLogin()">
+            <div id="login-error" style="color:var(--red);font-size:12px;min-height:16px"></div>
+            <button onclick="doLogin()">Log in</button>
+        </div>
+    </div>
     <script src="app.js"></script>
 </body>
 

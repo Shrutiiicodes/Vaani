@@ -10,3 +10,4 @@ slowapi
 pytest
 pytest-asyncio
 httpx
+pyjwt

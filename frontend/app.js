@@ -5,12 +5,25 @@ let currentLanguage = "hindi";
 let conversation = [];
 let currentActiveFormType = null;
 let sessionId = sessionStorage.getItem("bankingSessionId");
+let authToken = null;
+
+function authHeaders(extra = {}) {
+    return { ...extra, "Authorization": "Bearer " + authToken };
+}
+
+async function login(password) {
+    const res = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password })
+    });
+    if (!res.ok) throw new Error("Invalid credentials");
+    authToken = (await res.json()).access_token;
+}
 if (!sessionId) {
     sessionId = crypto.randomUUID();
     sessionStorage.setItem("bankingSessionId", sessionId);
 }
-
-const API_KEY = "secretkey123";  // must match .env
 
 // ── Union Bank of India — Reference Rates ──────────────────────────────────
 const LOAN_RATES = [
@@ -309,7 +322,7 @@ async function processCustomerAudio(blob) {
     document.getElementById("status").className = "status processing";
 
     try {
-        const res = await fetch("/api/customer-speak", { method: "POST", headers: { "X-Api-Key": API_KEY }, body: formData });
+        const res = await fetch("/api/customer-speak", { method: "POST", headers: authHeaders(), body: formData });
         const data = await res.json();
 
         if (data.detail) {
@@ -397,7 +410,7 @@ async function sendReply() {
     try {
         const res = await fetch("/api/staff-reply", {
             method: "POST",
-            headers: { "Content-Type": "application/json", "X-Api-Key": API_KEY },
+            headers: authHeaders({ "Content-Type": "application/json" }),
             body: JSON.stringify({ reply_text: replyText, target_language: currentLanguage, session_id: sessionId })
         });
         const data = await res.json();
@@ -420,7 +433,7 @@ async function generateSummary() {
     try {
         const res = await fetch("/api/summary", {
             method: "POST",
-            headers: { "Content-Type": "application/json", "X-Api-Key": API_KEY },
+            headers: authHeaders({ "Content-Type": "application/json" }),
             body: JSON.stringify({ conversation, customer_language: currentLanguage })
         });
         const data = await res.json();
@@ -451,7 +464,7 @@ function setStatus(msg) { document.getElementById("status").textContent = msg; }
 
 async function restoreSession() {
     try {
-        const res = await fetch(`/api/session/${sessionId}`);
+        const res = await fetch(`/api/session/${sessionId}`, { headers: authHeaders() });
         const data = await res.json();
         if (data.turns && data.turns.length > 0) {
             conversation = data.turns.map(t => ({
@@ -467,5 +480,13 @@ async function restoreSession() {
     }
 }
 
-// Call on load
-restoreSession();
+async function doLogin() {
+    const pw = document.getElementById("login-pw").value;
+    try {
+        await login(pw);
+        document.getElementById("login-overlay").style.display = "none";
+        restoreSession();
+    } catch {
+        document.getElementById("login-error").textContent = "Invalid password";
+    }
+}
