@@ -5,7 +5,7 @@ from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 from stt import transcribe_audio
 from translate import translate_customer_speech, translate_staff_reply, translate_text, generate_summary
-from tts import text_to_speech_base64
+from tts import text_to_speech_base64, is_supported_language
 from banking_context import COUNTERS
 from database import init_db
 from crud import get_db, get_or_create_session, add_turn, get_turns, update_session_language, get_session
@@ -46,7 +46,7 @@ async def customer_speak(
     active_form: str = Form(None),
     session_id: str = Form(None),
     db: Session = Depends(get_db),
-    _: dict = Depends(verify_token)
+    _: dict = Depends(verify_token),
 ):
     try:
         audio_bytes = await audio.read()
@@ -100,6 +100,7 @@ async def customer_speak(
             "follow_up_question":    data.get("follow_up_question"),
             "follow_up_audio":       None,
             "calculation_tts_audio": None,
+            "tts_supported": is_supported_language(detected_lang),
         }
 
         # Step 3: Handle Clarification TTS
@@ -158,7 +159,8 @@ async def staff_reply(
 
         return {
             "translated_reply": translated,
-            "audio_base64":     audio_b64
+            "audio_base64":     audio_b64,
+            "tts_supported":    audio_b64 is not None,
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

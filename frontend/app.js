@@ -15,7 +15,7 @@ async function login(password) {
     const res = await fetch("/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ session_id: sessionId, conversation, customer_language: currentLanguage })
+        body: JSON.stringify({ password })
     });
     if (!res.ok) throw new Error("Invalid credentials");
     authToken = (await res.json()).access_token;
@@ -415,12 +415,16 @@ async function sendReply() {
         });
         const data = await res.json();
         document.getElementById("reply-translated").textContent = `Translated: ${data.translated_reply}`;
-        new Audio(`data:audio/mp3;base64,${data.audio_base64}`).play();
+        if (data.audio_base64) {
+            new Audio(`data:audio/mp3;base64,${data.audio_base64}`).play();
+        } else {
+            setStatus(`Reply translated — voice not available for ${currentLanguage}`);
+        }
         conversation.push({ role: "staff", text: replyText, language: "english" });
         addLog("staff", "english", replyText, data.translated_reply);
         document.getElementById("staff-reply").value = "";
         document.getElementById("status").className = "status";
-        setStatus("Ready");
+        if (data.audio_base64) setStatus("Ready");
     } catch (err) {
         document.getElementById("status").className = "status error";
         setStatus("Error: " + err.message);
@@ -434,7 +438,7 @@ async function generateSummary() {
         const res = await fetch("/api/summary", {
             method: "POST",
             headers: authHeaders({ "Content-Type": "application/json" }),
-            body: JSON.stringify({ conversation, customer_language: currentLanguage })
+            body: JSON.stringify({ conversation, customer_language: currentLanguage, session_id: sessionId })
         });
         const data = await res.json();
         if (data.detail) throw new Error(data.detail);

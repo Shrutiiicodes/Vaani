@@ -1,5 +1,6 @@
 import base64, io
 from gtts import gTTS
+from typing import Optional
 
 LANGUAGE_CODES = {
     "hindi": "hi", "tamil": "ta", "telugu": "te",
@@ -7,9 +8,14 @@ LANGUAGE_CODES = {
     "kannada": "kn", "odia": "or", "english": "en"
 }
 
-def text_to_speech_base64(text: str, language: str) -> str:
-    """Convert text to speech, return base64 encoded MP3."""
-    lang_code = LANGUAGE_CODES.get(language.lower(), "hi")
+def is_supported_language(language: str) -> bool:
+    return language.lower() in LANGUAGE_CODES
+
+def text_to_speech_base64(text: str, language: str) -> Optional[str]:
+    """Return base64 MP3, or None if the language isn't supported (no silent fallback)."""
+    lang_code = LANGUAGE_CODES.get(language.lower())
+    if lang_code is None:
+        return None
     tts = gTTS(text=text, lang=lang_code, slow=False)
     buffer = io.BytesIO()
     tts.write_to_fp(buffer)

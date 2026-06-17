@@ -19,7 +19,7 @@ class StaffReplyRequest(BaseModel):
 
 class StaffReplyResponse(BaseModel):
     translated_reply: str
-    audio_base64: str
+    audio_base64: Optional[str]
 
 class SummaryRequest(BaseModel):
     conversation: list[dict]=[] # [{role, text, language}]
