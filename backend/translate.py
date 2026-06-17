@@ -226,10 +226,22 @@ def perform_calculations(inputs: dict) -> dict:
 
     return results
 
-
 async def translate_staff_reply(reply: str, target_lang: str) -> str:
-    prompt = f"Translate staff reply: {reply} to {target_lang}. Respond with ONLY translation."
-    response = client.chat.completions.create(model=MODEL, messages=[{"role": "user", "content": prompt}], temperature=0.1)
+    prompt = (
+        f"Translate the following bank staff reply into {target_lang} for the customer. "
+        f"Use simple, friendly language the customer understands, and preserve all amounts, "
+        f"account details, and banking terms exactly as defined. "
+        f"Respond with ONLY the translation, no preamble.\n\n"
+        f"Staff reply: {reply}"
+    )
+    response = client.chat.completions.create(
+        model=MODEL,
+        messages=[
+            {"role": "system", "content": BANKING_SYSTEM_PROMPT},
+            {"role": "user", "content": prompt}
+        ],
+        temperature=0.1
+    )
     return (response.choices[0].message.content or "").strip()
 
 

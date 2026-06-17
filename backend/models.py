@@ -22,8 +22,9 @@ class StaffReplyResponse(BaseModel):
     audio_base64: str
 
 class SummaryRequest(BaseModel):
-    conversation: list[dict]  # [{role, text, language}]
-    customer_language: str
+    conversation: list[dict]=[] # [{role, text, language}]
+    customer_language: str="hindi"
+    session_id: Optional[str]=None
 
 class SummaryResponse(BaseModel):
     english_summary: str

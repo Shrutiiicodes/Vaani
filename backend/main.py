@@ -8,7 +8,7 @@ from translate import translate_customer_speech, translate_staff_reply, translat
 from tts import text_to_speech_base64
 from banking_context import COUNTERS
 from database import init_db
-from crud import get_db, get_or_create_session, add_turn, get_turns, update_session_language
+from crud import get_db, get_or_create_session, add_turn, get_turns, update_session_language, get_session
 import json
 import os
 from auth import verify_token, create_access_token, verify_staff_password, revoke_token
@@ -165,13 +165,33 @@ async def staff_reply(
 
 
 # ── Route 3: Generate session summary ──
+# AFTER
 @app.post("/api/summary")
-async def session_summary(request: SummaryRequest, _: dict = Depends(verify_token)):
+async def session_summary(
+    request: SummaryRequest,
+    db: Session = Depends(get_db),
+    _: None = Depends(verify_token)        # ← if you renamed this for JWT, swap it here too
+):
     try:
-        summary = await generate_summary(
-            request.conversation, request.customer_language
-        )
+        # Prefer authoritative server-side history; fall back to client-sent turns
+        if request.session_id:
+            turns = get_turns(db, request.session_id)
+            conversation = turns if turns else request.conversation
+            session = get_session(db, request.session_id)
+            customer_language = (
+                session.customer_language if session else request.customer_language
+            )
+        else:
+            conversation = request.conversation
+            customer_language = request.customer_language
+
+        if not conversation:
+            raise HTTPException(status_code=400, detail="No conversation to summarize")
+
+        summary = await generate_summary(conversation, customer_language)
         return summary
+    except HTTPException:
+        raise                                # don't let the 400 get reboxed as a 500
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

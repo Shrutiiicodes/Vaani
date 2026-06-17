@@ -15,7 +15,7 @@ async function login(password) {
     const res = await fetch("/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password })
+        body: JSON.stringify({ session_id: sessionId, conversation, customer_language: currentLanguage })
     });
     if (!res.ok) throw new Error("Invalid credentials");
     authToken = (await res.json()).access_token;
@@ -437,6 +437,7 @@ async function generateSummary() {
             body: JSON.stringify({ conversation, customer_language: currentLanguage })
         });
         const data = await res.json();
+        if (data.detail) throw new Error(data.detail);
         document.getElementById("summary-english").textContent = data.english_summary;
         document.getElementById("summary-vernacular").textContent = data.vernacular_summary;
         document.getElementById("summary-lang-label").textContent =
