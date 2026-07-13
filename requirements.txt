@@ -11,3 +11,5 @@ pytest
 pytest-asyncio
 httpx
 pyjwt
+sacrebleu
+bert-score
