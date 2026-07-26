@@ -202,6 +202,7 @@ async def session_summary(
 @app.get("/api/session/{session_id}")
 @limiter.limit("20/minute")
 async def get_session_history(
+    request: Request,
     session_id: str,
     db: Session = Depends(get_db),
     _:dict=Depends(verify_token)

@@ -495,3 +495,7 @@ async function doLogin() {
         document.getElementById("login-error").textContent = "Invalid password";
     }
 }
+
+window.addEventListener("DOMContentLoaded", () => {
+    doLogin();
+});
