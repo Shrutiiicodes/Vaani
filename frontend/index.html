@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PS6 — Branch Voice Assistant</title>
+    <title>Vaani — Branch Voice Assistant</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
@@ -12,9 +12,17 @@
 
 <body>
     <div class="header">
-        <div class="logo"><span class="material-symbols-outlined">account_balance</span> Union Bank — Branch Voice
-            Assistant</div>
-        <div class="lang-badge" id="detected-lang">Waiting for customer...</div>
+        <div class="logo"><span class="material-symbols-outlined">account_balance</span> Vaani
+            <span class="logo-sub">· <span class="bank-name">Bank</span> Branch Voice Assistant</span></div>
+        <div class="header-actions">
+            <div class="lang-badge" id="detected-lang">Waiting for customer...</div>
+            <button class="header-btn" onclick="newCustomer()" title="Start a new customer session">
+                <span class="material-symbols-outlined">person_add</span> New customer</button>
+            <button class="header-btn" onclick="openHistory()" title="Past sessions">
+                <span class="material-symbols-outlined">history</span> History</button>
+            <button class="header-btn" onclick="logout()" title="Log out">
+                <span class="material-symbols-outlined">logout</span> <span id="staff-name"></span></button>
+        </div>
     </div>
     <div class="page-wrapper">
         <div class="main-grid">
@@ -35,8 +43,21 @@
                     <div class="clarification-q vernacular" id="clarification-q-vern"></div>
                 </div>
 
+                <label class="lang-hint-row">Customer language
+                    <select id="lang-hint">
+                        <option value="">Auto-detect</option>
+                        <option value="hi">Hindi</option>
+                        <option value="ta">Tamil</option>
+                        <option value="te">Telugu</option>
+                        <option value="mr">Marathi</option>
+                        <option value="bn">Bengali</option>
+                        <option value="gu">Gujarati</option>
+                        <option value="kn">Kannada</option>
+                        <option value="en">English</option>
+                    </select>
+                </label>
                 <button class="mic-btn" id="mic-btn" onclick="toggleRecording()">
-                    <span class="material-symbols-outlined">mic</span> Hold to Speak
+                    <span class="material-symbols-outlined">mic</span> Tap to Speak
                 </button>
                 <div class="status" id="status">Ready</div>
             </div>
@@ -101,7 +122,7 @@
             <div id="fin-loan" style="display:none">
                 <div class="fin-header">
                     <span class="material-symbols-outlined">account_balance_wallet</span>
-                    Union Bank — Loan Interest Rates (p.a.)
+                    <span class="bank-name">Bank</span> — Indicative Loan Rates (p.a.)
                 </div>
                 <div class="loan-chart" id="loan-chart">
                     <!-- Populated by JS -->
@@ -114,7 +135,7 @@
             <div id="fin-fdrd" style="display:none">
                 <div class="fin-header">
                     <span class="material-symbols-outlined">savings</span>
-                    Union Bank — FD &amp; RD Interest Rates (p.a.)
+                    <span class="bank-name">Bank</span> — Indicative FD &amp; RD Rates (p.a.)
                 </div>
                 <div class="fdrd-grid">
                     <div class="fd-block">
@@ -136,9 +157,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="fin-note">* Senior citizens get 0.50% additional on all tenures. Rates effective as on
-                    current
-                    quarter.</div>
+                <div class="fin-note">* Demo rates for illustration. Senior citizens get 0.50% additional on all tenures.</div>
             </div>
 
         </div>
@@ -168,15 +187,28 @@
             <button onclick="closeSummary()">Close</button>
         </div>
     </div>
-    <div class="summary-modal" id="login-overlay" style="display:flex">
-        <div class="summary-content" style="max-width:360px">
-            <div class="summary-title">Staff Login</div>
-            <input id="login-pw" type="password" value="staffpswd_1" placeholder="Staff password"
-                style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:var(--radius);margin-bottom:8px"
-                onkeydown="if(event.key==='Enter')doLogin()">
-            <div id="login-error" style="color:var(--red);font-size:12px;min-height:16px"></div>
-            <button onclick="doLogin()">Log in</button>
+    <!-- History modal -->
+    <div class="summary-modal" id="history-modal" style="display:none">
+        <div class="summary-content history-content">
+            <div class="summary-title">Past Sessions</div>
+            <div class="history-scroll">
+                <table class="data-table">
+                    <thead><tr><th>Last activity</th><th>Language</th><th>Intent</th><th>Turns</th><th>Summary</th></tr></thead>
+                    <tbody id="history-body"></tbody>
+                </table>
+            </div>
+            <button onclick="closeHistory()">Close</button>
         </div>
+    </div>
+
+    <div class="summary-modal" id="login-overlay" style="display:flex">
+        <form class="summary-content login-content" onsubmit="event.preventDefault(); doLogin();">
+            <div class="summary-title">Staff Login</div>
+            <input id="login-user" class="login-input" type="text" placeholder="Username" autocomplete="username" required>
+            <input id="login-pw" class="login-input" type="password" placeholder="Password" autocomplete="current-password" required>
+            <div id="login-error" style="color:var(--red);font-size:12px;min-height:16px"></div>
+            <button type="submit">Log in</button>
+        </form>
     </div>
     <script src="app.js"></script>
 </body>
