@@ -2,17 +2,19 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Install dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy all source
 COPY backend/ ./backend/
 COPY frontend/ ./frontend/
+RUN mkdir -p /app/data
 
-# Expose port
+ENV DATABASE_URL=sqlite:////app/data/vaani.db
 EXPOSE 8000
 
-# Run from backend directory so relative imports work
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s \
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=4)"
+
 WORKDIR /app/backend
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+# --proxy-headers: behind Render / a load balancer, rate limits must key on the real client IP.
+CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000} --proxy-headers --forwarded-allow-ips='*'"]

@@ -1,0 +1,6 @@
+-r requirements.txt
+pytest==9.0.2
+ruff==0.16.9
+jiwer==4.0.0
+sacrebleu==2.6.0
+# Optional, heavy (pulls in PyTorch): pip install bert-score   -> run_eval.py --bertscore
