@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+      - run: pip install -r requirements-dev.txt
+      - run: ruff check backend api
+      - run: pytest
+      - name: Eval scoring smoke test (replays saved results, no API calls)
+        run: python backend/eval/run_eval.py --mock
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t vaani .
+      - name: Container starts and passes its health check
+        run: |
+          docker run -d --name vaani -p 8000:8000 -e JWT_SECRET=ci-secret-value-long-enough -e STAFF_PASSWORD=ci-password vaani
+          for i in $(seq 1 30); do curl -fs localhost:8000/health && exit 0; sleep 1; done
+          docker logs vaani; exit 1
