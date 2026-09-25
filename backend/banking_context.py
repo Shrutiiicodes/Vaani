@@ -1,5 +1,17 @@
-BANKING_SYSTEM_PROMPT = """
-You are an expert banking assistant for Union Bank of India branches.
+import os
+
+BANK_NAME = os.getenv("BANK_NAME", "Demo Bank")
+
+# Customer languages: name (as Whisper reports it) -> ISO-639-1 code.
+# Odia is handled by the text pipeline, but Whisper cannot transcribe it and
+# no TTS voice exists for it, so it is deliberately absent here.
+LANGUAGES = {
+    "hindi": "hi", "tamil": "ta", "telugu": "te", "marathi": "mr",
+    "bengali": "bn", "gujarati": "gu", "kannada": "kn", "english": "en",
+}
+
+BANKING_SYSTEM_PROMPT = f"""
+You are an expert banking assistant for {BANK_NAME} branches in India.
 You help staff communicate with customers in their native language.
 
 Your responsibilities:
@@ -27,7 +39,7 @@ Never add information that wasn't in the original. Never omit amounts or account
 """
 
 INTENT_CATEGORIES = [
-    "account_opening", "balance_enquiry", "fd_rd_enquiry",
+    "account_opening", "balance_enquiry", "cash_transaction", "fd_rd_enquiry",
     "loan_enquiry", "kyc_update", "complaint", "fund_transfer",
     "account_closure", "nomination_update", "cheque_services",
     "mudra_loan", "kisan_credit_card", "debit_card_services",
@@ -46,10 +58,14 @@ COUNTERS = {
 
 PROCESS_GUIDES = {
     "account_opening": ["Ask for Aadhaar card and PAN card", "Ask for passport-size photograph", "Ask if mobile number is linked to Aadhaar", "Fill account opening form (AOF)", "Collect minimum balance (₹500 for basic savings)"],
+    "balance_enquiry": ["Ask for account number or passbook", "Verify identity (ID proof or signature)", "Share balance or print passbook entries", "Suggest mobile banking / missed-call balance for next time"],
+    "cash_transaction": ["Ask whether it is a withdrawal or a deposit", "Withdrawal: collect withdrawal slip or cheque and verify signature", "Deposit: collect pay-in slip, count and verify notes", "For cash above ₹50,000: collect PAN (or Form 60)", "Update passbook or hand over the receipt"],
     "kyc_update": ["Ask for current Aadhaar card", "Ask for PAN card if available", "Verify address — ask for address proof if changed", "Fill KYC update form", "Inform customer: processing takes 2–3 working days"],
     "loan_enquiry": ["Ask for type of loan: home, personal, gold, kisan, vehicle", "Ask for monthly income or salary slip", "Ask for existing loans or EMIs", "Check CIBIL score eligibility", "Share interest rate and EMI calculator result"],
     "fd_rd_enquiry": ["Ask for tenure preference (6 months to 10 years)", "Share current interest rate", "Ask for amount to be invested", "Confirm nomination details", "Ask if auto-renewal is required"],
+    "complaint": ["Listen and note the issue in the customer's words", "Ask for account number and transaction date / reference", "Register the complaint in the grievance system", "Share the complaint reference number", "Escalate to the operational supervisor if unresolved"],
     "fund_transfer": ["Ask for beneficiary account number and IFSC", "Confirm transfer amount", "Ask for transfer mode: NEFT / RTGS / IMPS", "Verify sender's account balance", "Collect transfer form or use net banking"],
+    "account_closure": ["Ask for the reason for closure (try to retain)", "Collect passbook, unused cheque leaves and debit card", "Fill account closure form with signature", "Settle balance by cash (small amounts) or transfer", "Close linked standing instructions and mandates"],
     "cheque_services": ["Ask for type: new chequebook / stop payment / cheque status", "Verify account number and CIF", "For stop payment: collect cheque number and reason", "For new chequebook: confirm delivery address"],
     "nomination_update": ["Ask for nominee name, relationship, date of birth", "Ask for nominee Aadhaar or ID proof", "Fill nomination form (DA-1)", "Get customer signature", "Update in CBS system"],
     "mudra_loan": ["Ask for business type and loan amount needed (Shishu <50k, Kishore 50k-5L, Tarun 5L-10L)", "Ask for business proof or registration", "Ask for last 6 months bank statement", "Check existing loan obligations", "Fill Mudra loan application form"],
@@ -63,27 +79,60 @@ FORM_TEMPLATES = {
     "kyc_update": ["account_number", "full_name", "new_address", "mobile", "email", "aadhaar_number", "pan_number"],
     "loan_application": ["applicant_name", "dob", "mobile", "loan_type", "loan_amount", "tenure_months", "monthly_income", "employment_type", "existing_emis", "property_address"],
     "fund_transfer": ["sender_account", "beneficiary_name", "beneficiary_account", "ifsc_code", "amount", "transfer_mode", "remarks", "transfer_date"],
-    "fd_opening": ["account_number", "deposit_amount", "tenure", "interest_payout_mode", "auto_renewal", "nominee_name"]
+    "fd_opening": ["account_number", "deposit_amount", "tenure_months", "interest_payout_mode", "auto_renewal", "nominee_name"]
 }
 
-# ── Union Bank Official Rates (Approximate for 2026) ─────────────────────────
-BANK_RATES = {
-    "loan_rates": {
-        "home_loan": 8.5,
-        "personal_loan": 11.5,
-        "vehicle_loan": 8.8,
-        "gold_loan": 9.0,
-        "education_loan": 8.5,
-        "msme": 9.5,
-        "kcc": 7.0,
-        "mudra": 9.5,
-        "default": 10.0
-    },
-    "deposit_rates": {
-        "fd_1yr": 6.8,
-        "fd_2yr": 7.0,
-        "fd_3yr": 7.0,
-        "fd_5yr": 6.5,
-        "rd": 6.8
-    }
+# Which form the staff should see for an intent.
+INTENT_FORMS = {
+    "account_opening": "account_opening",
+    "kyc_update": "kyc_update",
+    "loan_enquiry": "loan_application",
+    "mudra_loan": "loan_application",
+    "kisan_credit_card": "loan_application",
+    "fund_transfer": "fund_transfer",
+    "fd_rd_enquiry": "fd_opening",
 }
+
+# ── Indicative rates (demo values, not any real bank's card rates) ────────────
+# The frontend renders these via /api/rates, so this is the single source.
+LOAN_RATES = {  # category -> (display label, % p.a.)
+    "home_loan": ("Home Loan", 8.50),
+    "personal_loan": ("Personal Loan", 11.50),
+    "vehicle_loan": ("Vehicle Loan", 8.80),
+    "education_loan": ("Education Loan", 8.50),
+    "gold_loan": ("Gold Loan", 9.00),
+    "msme": ("MSME / Business", 9.50),
+    "mudra": ("Mudra (Shishu)", 9.50),
+    "kcc": ("Kisan Credit Card", 7.00),
+}
+DEFAULT_LOAN_RATE = 10.0
+
+# Free-text loan categories the LLM emits -> LOAN_RATES key.
+LOAN_CATEGORY_ALIASES = {
+    "home": "home_loan", "housing": "home_loan", "housing_loan": "home_loan",
+    "personal": "personal_loan",
+    "vehicle": "vehicle_loan", "car": "vehicle_loan", "car_loan": "vehicle_loan",
+    "auto": "vehicle_loan", "two_wheeler": "vehicle_loan", "bike": "vehicle_loan",
+    "education": "education_loan", "student": "education_loan",
+    "gold": "gold_loan",
+    "business": "msme", "business_loan": "msme", "msme_loan": "msme",
+    "mudra_loan": "mudra",
+    "kisan": "kcc", "kisan_credit_card": "kcc", "kisan_credit": "kcc",
+    "agri": "kcc", "agriculture": "kcc", "agricultural": "kcc", "farm": "kcc",
+}
+
+# FD slabs: (max tenure in days, label, general % p.a., senior citizen % p.a.).
+# RD uses the same slab rate as an FD of equal tenure.
+FD_SLABS = [
+    (14, "7 – 14 days", 3.00, 3.50),
+    (29, "15 – 29 days", 3.00, 3.50),
+    (45, "30 – 45 days", 3.50, 4.00),
+    (90, "46 – 90 days", 4.50, 5.00),
+    (179, "91 – 179 days", 4.50, 5.00),
+    (364, "180 – 364 days", 5.50, 6.00),
+    (365, "1 year", 6.70, 7.20),
+    (730, "1 – 2 years", 6.80, 7.30),
+    (1095, "2 – 3 years", 6.50, 7.00),
+    (1825, "3 – 5 years", 6.50, 7.00),
+    (3650, "5 – 10 years", 6.50, 7.00),
+]
