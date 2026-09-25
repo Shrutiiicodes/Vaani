@@ -1,31 +1,24 @@
 """
 Vaani NLP-pipeline evaluation harness.
 
-Scores translate_customer_speech() against a gold-standard test set:
-  - Intent classification accuracy (overall / per-language / per-intent)
-  - Counter-routing accuracy (soft metric — see README)
-  - Entity extraction Precision / Recall / F1 over annotated slots
-  - Follow-up clarification detection
-  - Latency (mean / P50 / P95)  [LLM stage only — STT/TTS are NOT included]
-  - Optional: translation BLEU (--bleu) and BERTScore (--bertscore)
+Scores translate_customer_speech() against the gold set in test_cases.json:
+  - Intent accuracy (overall, per language, per intent, code-mixed) + confusion pairs
+  - Counter-routing accuracy (soft: the LLM suggests the counter)
+  - Entity extraction precision / recall / F1 over annotated slots
+  - Clarification: recall on ambiguous cases, false alarms on clear ones
+  - Latency of the LLM stage (mean / P50 / P95)
+  - Optional translation BLEU (--bleu) and BERTScore (--bertscore)
 
-IMPORTANT — what this measures:
-  This feeds GOLD TEXT directly into translate_customer_speech(), bypassing the
-  Whisper STT stage. So the numbers reflect translation + intent + entity +
-  routing quality GIVEN a correct transcript. It does NOT measure STT accuracy.
-  Be honest about that scope when you quote a number.
-
-Requires GROQ_API_KEY (real Groq calls are made). Runs sequentially with a delay
-to stay under free-tier rate limits.
+Scope: this feeds GOLD TEXT into the pipeline, bypassing Whisper. It measures
+translation + intent + entities + routing given a correct transcript, not STT
+(see run_stt_eval.py for that).
 
 Usage:
-  python run_eval.py                      # full run, default delay
-  python run_eval.py --lang hindi         # only one language
-  python run_eval.py --limit 10           # first N cases (smoke test)
-  python run_eval.py --delay 2.0          # slow down for rate limits
-  python run_eval.py --bleu               # add corpus BLEU (needs sacrebleu)
-  python run_eval.py --bertscore          # add BERTScore F1 (needs bert-score)
-  python run_eval.py --strict-entities    # count extra predicted slots as FP
+  python run_eval.py                       # full run (real Groq calls, slow on free tier)
+  python run_eval.py --limit 10 --delay 2  # smoke test
+  python run_eval.py --lang tamil
+  python run_eval.py --model qwen/qwen3.8-27b --out eval_results_qwen.json
+  python run_eval.py --mock                # re-score saved results, no API calls (CI)
 """
 import argparse
 import asyncio
@@ -35,264 +28,284 @@ import re
 import statistics
 import sys
 import time
-from collections import defaultdict
-
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-
-from dotenv import load_dotenv
-
-load_dotenv()  # picks up backend/.env or repo-root .env if present
+from collections import Counter, defaultdict
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.join(HERE, ".."))
 
-# Keys we treat as monetary → compared numerically via clean_number
-AMOUNT_KEYS = {"amount", "loan_amount", "deposit_amount", "principal", "income", "p"}
-
-# Alias map: canonical gold key -> alternate keys the LLM may emit.
-# Mirrors the aliasing already used in translate.py so scoring stays fair.
-ENTITY_ALIASES = {
-    "full_name": ["name", "customer_name", "applicant_name"],
-    "amount": ["loan_amount", "deposit_amount", "loan_value", "principal", "deposit_value"],
-    "tenure_months": ["tenure", "duration", "period", "years", "months"],
-    "mobile": ["phone", "contact", "mobile_number"],
-    "account_type": ["acct_type", "account"],
-    "loan_type": ["loan_category"],
-    "nominee_relation": ["relation", "relationship"],
-    "nominee_name": ["nominee"],
-    "account_number": ["acc_no", "acct_number", "account_no"],
-}
+NUMERIC_KEYS = {"amount", "monthly_income", "tenure_months"}
 
 
-def _norm_key(k: str) -> str:
-    return str(k).strip().lower().replace(" ", "_")
+def _clean(s) -> str:
+    return re.sub(r"[^a-z0-9]", "", str(s).strip().lower())
 
 
-def _resolve(gold_key: str, pred: dict):
-    """Return the predicted value for a gold key, checking aliases. None if absent."""
-    gk = _norm_key(gold_key)
-    npred = {_norm_key(k): v for k, v in pred.items()}
-    if gk in npred:
-        return npred[gk]
-    for alt in ENTITY_ALIASES.get(gk, []):
-        if _norm_key(alt) in npred:
-            return npred[_norm_key(alt)]
-    return None
-
-
-def _values_match(gold_key: str, gold_val, pred_val) -> bool:
-    if pred_val is None or str(pred_val).strip() == "":
+def values_match(key: str, gold, pred) -> bool:
+    from translate import clean_number
+    if pred is None or str(pred).strip() == "":
         return False
-    gk = _norm_key(gold_key)
-    if gk in AMOUNT_KEYS or gk == "amount":
-        from translate import clean_number
-        return abs(clean_number(gold_val) - clean_number(pred_val)) < 1.0
-    if gk in ("tenure_months",):
-        from translate import clean_number
-        # accept months given as-is; be lenient (e.g. "20 years" handled upstream sometimes)
-        gv, pv = clean_number(gold_val), clean_number(pred_val)
-        return gv == pv or (gv > 0 and (abs(gv - pv) < 1.0 or abs(gv - pv * 12) < 1.0 or abs(gv * 12 - pv) < 1.0))
-
-    def clean_str(s):
-        return re.sub(r"[^a-z0-9]", "", str(s).strip().lower())
-
-    g, p = clean_str(gold_val), clean_str(pred_val)
-    if not g:
-        return False
-    return g == p or g in p or p in g  # lenient containment for names/types
+    if key in NUMERIC_KEYS:
+        return abs(clean_number(gold) - clean_number(pred)) < 1.0
+    g, p = _clean(gold), _clean(pred)
+    return bool(g) and (g == p or g in p or p in g)   # lenient containment for names / types
 
 
-def score_entities(gold: dict, pred: dict, strict: bool):
-    """Slot-level TP/FP/FN. See README for the exact definition.
-    Non-strict (default): only annotated gold slots are scored.
-      TP = gold slot predicted with matching value
-      FN = gold slot missing/empty in pred
-      FP = gold slot predicted with a WRONG non-empty value
-    Strict: additionally counts predicted keys NOT in gold as FP.
-    """
+def score_entities(gold: dict, pred: dict) -> tuple[int, int, int]:
+    """Slot-level, on the pipeline's canonical keys (it normalises aliases itself).
+    TP = gold slot predicted with a matching value; FN = gold slot missing;
+    FP = gold slot predicted with a wrong value. Extra predicted keys are not scored."""
     tp = fp = fn = 0
-    for gk, gv in gold.items():
-        pv = _resolve(gk, pred)
-        if pv is None or str(pv).strip() == "":
+    for key, gold_val in gold.items():
+        pred_val = pred.get(key)
+        if pred_val is None or str(pred_val).strip() == "":
             fn += 1
-        elif _values_match(gk, gv, pv):
+        elif values_match(key, gold_val, pred_val):
             tp += 1
         else:
             fp += 1
-    if strict:
-        # keys predicted that map to no gold slot
-        gold_norm = {_norm_key(k) for k in gold}
-        gold_norm |= {_norm_key(a) for k in gold for a in ENTITY_ALIASES.get(_norm_key(k), [])}
-        for pk, pv in pred.items():
-            if str(pv).strip() == "":
-                continue
-            if _norm_key(pk) not in gold_norm:
-                fp += 1
     return tp, fp, fn
 
 
 def prf(tp, fp, fn):
-    p = tp / (tp + fp) if (tp + fp) else 0.0
-    r = tp / (tp + fn) if (tp + fn) else 0.0
-    f = 2 * p * r / (p + r) if (p + r) else 0.0
-    return p, r, f
+    p = tp / (tp + fp) if tp + fp else 0.0
+    r = tp / (tp + fn) if tp + fn else 0.0
+    return p, r, (2 * p * r / (p + r) if p + r else 0.0)
 
 
-async def evaluate(args):
-    with open(os.path.join(HERE, "test_cases.json"), encoding="utf-8") as f:
-        cases = json.load(f)
+def pct(values, q):
+    s = sorted(values)
+    return s[min(len(s) - 1, int(q * len(s)))] if s else 0.0
 
-    if args.lang:
-        cases = [c for c in cases if c["source_lang"] == args.lang]
-    if args.limit:
-        cases = cases[: args.limit]
-    if not cases:
-        print("No cases match the filter.")
-        return
 
-    if not os.getenv("GROQ_API_KEY"):
-        print("ERROR: GROQ_API_KEY not set. Put it in backend/.env or export it.")
-        sys.exit(1)
+def summarise(cases_by_id: dict, details: list, model: str) -> dict:
+    scored = [d for d in details if "error" not in d]
+    n = len(scored)
+    if not n:
+        raise SystemExit("No scored cases.")
 
+    def acc(rows):
+        return sum(r["intent_ok"] for r in rows) / len(rows) if rows else None
+
+    by_lang, by_intent = defaultdict(list), defaultdict(list)
+    for d in scored:
+        by_lang[d["lang"]].append(d)
+        by_intent[d["intent_expected"]].append(d)
+
+    ent = [sum(d[k] for d in scored) for k in ("ent_tp", "ent_fp", "ent_fn")]
+    ep, er, ef = prf(*ent)
+    known = [d for d in scored if d.get("clarification_pred") is not None]
+    ambiguous = [d for d in known if cases_by_id[d["id"]].get("expect_clarification")]
+    clear = [d for d in known if not cases_by_id[d["id"]].get("expect_clarification")]
+    mixed = [d for d in scored if cases_by_id[d["id"]].get("code_mixed")]
+    original = [d for d in scored if d["id"] <= 60]
+    orig_ent = [sum(d[k] for d in original) for k in ("ent_tp", "ent_fp", "ent_fn")]
+    lat = [d["latency_s"] for d in scored if d.get("latency_s") is not None]
+    confusions = Counter((d["intent_expected"], d["intent_pred"]) for d in scored if not d["intent_ok"])
+
+    return {
+        "model": model,
+        "n_scored": n,
+        "n_errors": len(details) - n,
+        "intent_accuracy": acc(scored),
+        "counter_accuracy": sum(d["counter_ok"] for d in scored) / n,
+        "entity_precision": ep, "entity_recall": er, "entity_f1": ef,
+        "entity_slots": dict(zip(("tp", "fp", "fn"), ent, strict=True)),
+        "clarification_recall": (sum(d["clarification_pred"] for d in ambiguous) / len(ambiguous)) if ambiguous else None,
+        "clarification_false_alarm_rate": (sum(d["clarification_pred"] for d in clear) / len(clear)) if clear else None,
+        "code_mixed_intent_accuracy": acc(mixed),
+        "original_60": {"n": len(original), "intent_accuracy": acc(original), "entity_f1": prf(*orig_ent)[2]},
+        "latency_llm_stage": {"mean": statistics.mean(lat), "p50": pct(lat, .5), "p95": pct(lat, .95)} if lat else None,
+        "per_language_intent": {k: {"correct": sum(r["intent_ok"] for r in v), "total": len(v)} for k, v in sorted(by_lang.items())},
+        "per_intent": {k: {"correct": sum(r["intent_ok"] for r in v), "total": len(v)} for k, v in sorted(by_intent.items())},
+        "top_confusions": [{"expected": e, "predicted": p, "count": c} for (e, p), c in confusions.most_common(10)],
+        "note": "Gold-text input: STT (Whisper) is not included. Counter accuracy is a soft metric.",
+    }
+
+
+def print_summary(s: dict):
+    print("\n" + "=" * 64)
+    print(f"  RESULTS  model={s['model']}  ({s['n_scored']} scored, {s['n_errors']} errors)")
+    print("=" * 64)
+    print(f"  Intent accuracy        : {s['intent_accuracy']:.1%}")
+    print(f"  Counter accuracy       : {s['counter_accuracy']:.1%}   [soft]")
+    print(f"  Entity P / R / F1      : {s['entity_precision']:.3f} / {s['entity_recall']:.3f} / {s['entity_f1']:.3f}   {s['entity_slots']}")
+    if s["clarification_recall"] is not None:
+        print(f"  Clarification recall   : {s['clarification_recall']:.1%}   false alarms: {s['clarification_false_alarm_rate']:.1%}")
+    if s["code_mixed_intent_accuracy"] is not None:
+        print(f"  Code-mixed intent acc. : {s['code_mixed_intent_accuracy']:.1%}")
+    o = s["original_60"]
+    if o["n"]:
+        print(f"  Original 60 cases      : intent {o['intent_accuracy']:.1%}, entity F1 {o['entity_f1']:.3f}")
+    if s["latency_llm_stage"]:
+        lat = s["latency_llm_stage"]
+        print(f"  LLM latency mean/P50/P95: {lat['mean']:.2f} / {lat['p50']:.2f} / {lat['p95']:.2f}s")
+    print("\n  Per-language intent accuracy:")
+    for lang, v in s["per_language_intent"].items():
+        print(f"    {lang:<10} {v['correct'] / v['total']:.0%}  ({v['correct']}/{v['total']})")
+    print("\n  Per-intent accuracy:")
+    for it, v in s["per_intent"].items():
+        print(f"    {it:<24} {v['correct'] / v['total']:.0%}  ({v['correct']}/{v['total']})")
+    if s["top_confusions"]:
+        print("\n  Most common confusions (expected -> predicted):")
+        for c in s["top_confusions"]:
+            print(f"    {c['expected']:<24} -> {c['predicted']:<24} x{c['count']}")
+
+
+def write_markdown(s: dict, path: str):
+    lat = s["latency_llm_stage"] or {}
+    lines = [
+        "# Evaluation results",
+        "",
+        f"Model `{s['model']}` on {s['n_scored']} gold-text cases ({s['n_errors']} errored). "
+        "Whisper is bypassed, so this measures the language pipeline given a correct transcript.",
+        "Non-English cases were written by the author and are flagged for native-speaker review.",
+        "",
+        "| Metric | Value |",
+        "|---|---:|",
+        f"| Intent accuracy | {s['intent_accuracy']:.1%} |",
+        f"| Counter routing accuracy (soft) | {s['counter_accuracy']:.1%} |",
+        f"| Entity precision / recall / F1 | {s['entity_precision']:.2f} / {s['entity_recall']:.2f} / {s['entity_f1']:.2f} |",
+    ]
+    if s["clarification_recall"] is not None:
+        lines.append(f"| Clarification recall (ambiguous requests) | {s['clarification_recall']:.0%} |")
+        lines.append(f"| Clarification false-alarm rate | {s['clarification_false_alarm_rate']:.1%} |")
+    if s["code_mixed_intent_accuracy"] is not None:
+        lines.append(f"| Code-mixed (Hinglish) intent accuracy | {s['code_mixed_intent_accuracy']:.1%} |")
+    if lat:
+        lines.append(f"| LLM stage latency p50 / p95 | {lat['p50']:.2f}s / {lat['p95']:.2f}s |")
+    lines += ["", "## Per language", "", "| Language | Intent accuracy | Cases |", "|---|---:|---:|"]
+    lines += [f"| {k} | {v['correct'] / v['total']:.0%} | {v['total']} |" for k, v in s["per_language_intent"].items()]
+    lines += ["", "## Per intent", "", "| Intent | Accuracy | Cases |", "|---|---:|---:|"]
+    lines += [f"| {k} | {v['correct'] / v['total']:.0%} | {v['total']} |" for k, v in s["per_intent"].items()]
+    if s["top_confusions"]:
+        lines += ["", "## Most common confusions", "", "| Expected | Predicted | Count |", "|---|---|---:|"]
+        lines += [f"| {c['expected']} | {c['predicted']} | {c['count']} |" for c in s["top_confusions"]]
+    with open(path, "w", encoding="utf-8", newline="\n") as f:
+        f.write("\n".join(lines) + "\n")
+
+
+def detail_for(case: dict, result: dict, latency: float | None) -> dict:
+    pred_entities = result.get("entities") or {}
+    tp, fp, fn = score_entities(case.get("expected_entities", {}), pred_entities)
+    return {
+        "id": case["id"], "lang": case["source_lang"],
+        "intent_expected": case["expected_intent"], "intent_pred": result.get("intent", "other"),
+        "intent_ok": result.get("intent") == case["expected_intent"],
+        "counter_expected": case["expected_counter"], "counter_pred": result.get("suggested_counter"),
+        "counter_ok": result.get("suggested_counter") == case["expected_counter"],
+        "entities_expected": case.get("expected_entities", {}), "entities_pred": pred_entities,
+        "ent_tp": tp, "ent_fp": fp, "ent_fn": fn,
+        "clarification_pred": result.get("needs_clarification"),   # None = not recorded (old runs)
+        "english_pred": result.get("english_translation", ""),
+        "latency_s": round(latency, 3) if latency is not None else None,
+    }
+
+
+async def run_live(cases: list, args) -> list:
     from translate import translate_customer_speech
-
-    intent_ok = 0
-    counter_ok = 0
-    ent_tp = ent_fp = ent_fn = 0
-    clar_ok = clar_total = 0
-    latencies = []
-    per_lang = defaultdict(lambda: [0, 0])      # lang -> [intent_correct, total]
-    per_intent = defaultdict(lambda: [0, 0])    # intent -> [correct, total]
     details = []
-    hypotheses, references = [], []             # for BLEU/BERTScore
-
     for idx, case in enumerate(cases, 1):
         try:
             t0 = time.perf_counter()
             result = await translate_customer_speech(case["audio_text"], case["source_lang"])
             dt = time.perf_counter() - t0
         except Exception as e:
-            print(f"[{idx}/{len(cases)}] id={case['id']} ERROR: {e}")
-            details.append({"id": case["id"], "error": str(e)})
-            await asyncio.sleep(args.delay)
+            print(f"[{idx}/{len(cases)}] id={case['id']} ERROR: {str(e)[:200]}")
+            details.append({"id": case["id"], "error": str(e)[:500]})
+            await asyncio.sleep(args.delay * 3)
             continue
-
-        latencies.append(dt)
-        pred_intent = result.get("intent", "other")
-        pred_counter = result.get("suggested_counter")
-        pred_entities = result.get("entities", {}) or {}
-
-        i_ok = pred_intent == case["expected_intent"]
-        c_ok = pred_counter == case["expected_counter"]
-        intent_ok += i_ok
-        counter_ok += c_ok
-        per_lang[case["source_lang"]][0] += i_ok
-        per_lang[case["source_lang"]][1] += 1
-        per_intent[case["expected_intent"]][0] += i_ok
-        per_intent[case["expected_intent"]][1] += 1
-
-        tp, fp, fn = score_entities(case.get("expected_entities", {}), pred_entities, args.strict_entities)
-        ent_tp += tp; ent_fp += fp; ent_fn += fn
-
-        if case.get("expect_clarification"):
-            clar_total += 1
-            clar_ok += bool(result.get("needs_clarification"))
-
-        hypotheses.append(result.get("english_translation", ""))
-        references.append(case["expected_english"])
-
-        details.append({
-            "id": case["id"], "lang": case["source_lang"],
-            "intent_expected": case["expected_intent"], "intent_pred": pred_intent, "intent_ok": i_ok,
-            "counter_expected": case["expected_counter"], "counter_pred": pred_counter, "counter_ok": c_ok,
-            "entities_expected": case.get("expected_entities", {}), "entities_pred": pred_entities,
-            "ent_tp": tp, "ent_fp": fp, "ent_fn": fn,
-            "english_pred": result.get("english_translation", ""),
-            "latency_s": round(dt, 3),
-        })
-
-        flag = "OK " if i_ok else "XX "
-        print(f"[{idx}/{len(cases)}] {flag} {case['source_lang']:<8} "
-              f"exp={case['expected_intent']:<22} got={pred_intent:<22} {dt:.2f}s")
+        d = detail_for(case, result, dt)
+        details.append(d)
+        print(f"[{idx}/{len(cases)}] {'OK' if d['intent_ok'] else 'XX'} {case['source_lang']:<8} "
+              f"exp={case['expected_intent']:<23} got={d['intent_pred']:<23} {dt:.2f}s", flush=True)
         await asyncio.sleep(args.delay)
+    return details
 
-    n = len([d for d in details if "error" not in d])
-    if n == 0:
-        print("\nAll cases errored — check API key / rate limits.")
-        return
 
-    ep, er, ef = prf(ent_tp, ent_fp, ent_fn)
-    lat_sorted = sorted(latencies)
-    p50 = statistics.median(lat_sorted)
-    p95 = lat_sorted[min(len(lat_sorted) - 1, int(0.95 * len(lat_sorted)))]
-
-    print("\n" + "=" * 60)
-    print(f"  RESULTS  ({n} cases scored)")
-    print("=" * 60)
-    print(f"  Intent accuracy   : {intent_ok/n:.1%}   ({intent_ok}/{n})")
-    print(f"  Counter accuracy  : {counter_ok/n:.1%}   ({counter_ok}/{n})   [soft — LLM-suggested]")
-    print(f"  Entity  Precision : {ep:.3f}")
-    print(f"  Entity  Recall    : {er:.3f}")
-    print(f"  Entity  F1        : {ef:.3f}   (slots: tp={ent_tp} fp={ent_fp} fn={ent_fn})")
-    if clar_total:
-        print(f"  Clarification det.: {clar_ok}/{clar_total} ambiguous cases flagged")
-    print(f"  Latency mean/P50/P95 (LLM stage): {statistics.mean(latencies):.2f} / {p50:.2f} / {p95:.2f}s")
-
-    print("\n  Per-language intent accuracy:")
-    for lang, (ok, tot) in sorted(per_lang.items()):
-        print(f"    {lang:<10} {ok/tot:.0%}  ({ok}/{tot})")
-
-    print("\n  Per-intent accuracy:")
-    for it, (ok, tot) in sorted(per_intent.items()):
-        print(f"    {it:<24} {ok/tot:.0%}  ({ok}/{tot})")
-
-    summary = {
-        "n_scored": n,
-        "intent_accuracy": intent_ok / n,
-        "counter_accuracy": counter_ok / n,
-        "entity_precision": ep, "entity_recall": er, "entity_f1": ef,
-        "entity_slots": {"tp": ent_tp, "fp": ent_fp, "fn": ent_fn},
-        "latency_llm_stage": {"mean": statistics.mean(latencies), "p50": p50, "p95": p95},
-        "per_language_intent": {k: {"correct": v[0], "total": v[1]} for k, v in per_lang.items()},
-        "per_intent": {k: {"correct": v[0], "total": v[1]} for k, v in per_intent.items()},
-        "note": "LLM-stage only; STT (Whisper) not included. Counter accuracy is a soft metric.",
-    }
-
-    if args.bleu:
-        try:
-            import sacrebleu
-            bleu = sacrebleu.corpus_bleu(hypotheses, [references]).score
-            summary["bleu"] = bleu
-            print(f"\n  Translation BLEU  : {bleu:.1f}")
-        except ImportError:
-            print("\n  (BLEU skipped — `pip install sacrebleu`)")
-
-    if args.bertscore:
-        try:
-            from bert_score import score as bertscore
-            _, _, F1 = bertscore(hypotheses, references, lang="en", verbose=False)
-            val = float(F1.mean())
-            summary["bertscore_f1"] = val
-            print(f"  Translation BERTScore F1: {val:.3f}")
-        except ImportError:
-            print("  (BERTScore skipped — `pip install bert-score`)")
-
-    out_path = os.path.join(HERE, "eval_results.json")
-    with open(out_path, "w", encoding="utf-8") as f:
-        json.dump({"summary": summary, "details": details}, f, ensure_ascii=False, indent=2)
-    print(f"\n  Full per-case results written to {out_path}")
-    print("=" * 60)
+def replay(cases_by_id: dict, path: str) -> tuple[list, str]:
+    """Re-score saved predictions with the current scoring code (no API calls)."""
+    with open(path, encoding="utf-8") as f:
+        saved = json.load(f)
+    details = []
+    for d in saved["details"]:
+        if "error" in d or d["id"] not in cases_by_id:
+            continue
+        result = {"intent": d["intent_pred"], "suggested_counter": d["counter_pred"],
+                  "entities": d["entities_pred"], "needs_clarification": d.get("clarification_pred"),
+                  "english_translation": d.get("english_pred", "")}
+        details.append(detail_for(cases_by_id[d["id"]], result, d.get("latency_s")))
+    return details, saved["summary"].get("model", "unknown")
 
 
 def main():
+    sys.stdout.reconfigure(encoding="utf-8")
     ap = argparse.ArgumentParser(description="Vaani NLP evaluation harness")
-    ap.add_argument("--lang", help="filter to one source language")
-    ap.add_argument("--limit", type=int, help="only run first N cases")
-    ap.add_argument("--delay", type=float, default=1.0, help="seconds between calls (rate-limit guard)")
-    ap.add_argument("--bleu", action="store_true", help="compute corpus BLEU (needs sacrebleu)")
-    ap.add_argument("--bertscore", action="store_true", help="compute BERTScore F1 (needs bert-score)")
-    ap.add_argument("--strict-entities", action="store_true", help="count extra predicted slots as FP")
+    ap.add_argument("--lang", help="only this source language")
+    ap.add_argument("--limit", type=int, help="only the first N cases")
+    ap.add_argument("--delay", type=float, default=9.0,
+                    help="seconds between calls; ~9s keeps one model under Groq's 8k tokens/min free tier")
+    ap.add_argument("--model", help="override LLM_MODEL for this run")
+    ap.add_argument("--out", default="eval_results.json", help="results file (in backend/eval/)")
+    ap.add_argument("--markdown", default="RESULTS.md", help="markdown summary file; '' to skip")
+    ap.add_argument("--mock", action="store_true", help="re-score an existing results file instead of calling the API")
+    ap.add_argument("--bleu", action="store_true", help="corpus BLEU (needs sacrebleu)")
+    ap.add_argument("--bertscore", action="store_true", help="BERTScore F1 (needs bert-score)")
     args = ap.parse_args()
-    asyncio.run(evaluate(args))
+
+    if args.model:
+        os.environ["LLM_MODEL"] = args.model
+
+    from dotenv import load_dotenv
+    load_dotenv()
+
+    with open(os.path.join(HERE, "test_cases.json"), encoding="utf-8") as f:
+        cases = json.load(f)
+    if args.lang:
+        cases = [c for c in cases if c["source_lang"] == args.lang]
+    if args.limit:
+        cases = cases[: args.limit]
+    cases_by_id = {c["id"]: c for c in cases}
+    out_path = os.path.join(HERE, args.out)
+
+    if args.mock:
+        details, model = replay(cases_by_id, out_path)
+        print_summary(summarise(cases_by_id, details, model))
+        return
+
+    if not os.getenv("GROQ_API_KEY"):
+        raise SystemExit("GROQ_API_KEY not set. Put it in .env or export it.")
+    from translate import MODEL
+    details = asyncio.run(run_live(cases, args))
+    summary = summarise(cases_by_id, details, MODEL)
+
+    scored = [d for d in details if "error" not in d]
+    hyps = [d["english_pred"] for d in scored]
+    refs = [cases_by_id[d["id"]]["expected_english"] for d in scored]
+    if args.bleu:
+        try:
+            import sacrebleu
+            summary["bleu"] = sacrebleu.corpus_bleu(hyps, [refs]).score
+        except ImportError:
+            print("(BLEU skipped: pip install sacrebleu)")
+    if args.bertscore:
+        try:
+            from bert_score import score as bertscore
+            summary["bertscore_f1"] = float(bertscore(hyps, refs, lang="en", verbose=False)[2].mean())
+        except ImportError:
+            print("(BERTScore skipped: pip install bert-score)")
+
+    print_summary(summary)
+    for key, name in (("bleu", "Translation BLEU"), ("bertscore_f1", "BERTScore F1")):
+        if key in summary:
+            print(f"  {name}: {summary[key]:.3f}")
+    with open(out_path, "w", encoding="utf-8", newline="\n") as f:
+        json.dump({"summary": summary, "details": details}, f, ensure_ascii=False, indent=2)
+    if args.markdown:
+        write_markdown(summary, os.path.join(HERE, args.markdown))
+        if "bleu" in summary:
+            with open(os.path.join(HERE, args.markdown), "a", encoding="utf-8") as f:
+                f.write(f"\nCorpus BLEU against the reference translations: {summary['bleu']:.1f}\n")
+    print(f"\n  Results written to {out_path}")
 
 
 if __name__ == "__main__":

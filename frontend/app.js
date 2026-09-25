@@ -447,6 +447,7 @@ function resetDashboard() {
 
 function newCustomer() {
     sessionId = newSessionId();
+    $("lang-hint").value = "";   // the next customer may speak another language
     resetDashboard();
     setStatus("New customer session");
 }

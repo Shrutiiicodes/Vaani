@@ -116,7 +116,8 @@
         "total": 2
       }
     },
-    "note": "LLM-stage only; STT (Whisper) not included. Counter accuracy is a soft metric."
+    "note": "Original baseline before this branch: 60 cases, llama-3.3-70b-versatile (since retired by Groq). Clarification was not recorded.",
+    "model": "llama-3.3-70b-versatile"
   },
   "details": [
     {

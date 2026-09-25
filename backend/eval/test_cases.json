@@ -320,7 +320,8 @@
         "expected_entities": {},
         "expected_counter": "inquiry_desk",
         "needs_native_review": true,
-        "expect_clarification": true
+        "expect_clarification": true,
+        "code_mixed": true
     },
     {
         "id": 30,
@@ -656,6 +657,1024 @@
         "expected_intent": "loan_enquiry",
         "expected_entities": {
             "loan_type": "home"
+        },
+        "expected_counter": "specialized_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 61,
+        "source_lang": "marathi",
+        "audio_text": "मला दोन वर्षांसाठी एक लाख रुपयांची मुदत ठेव करायची आहे",
+        "expected_english": "I want to make a fixed deposit of one lakh rupees for two years",
+        "expected_intent": "fd_rd_enquiry",
+        "expected_entities": {
+            "amount": "100000",
+            "tenure_months": "24"
+        },
+        "expected_counter": "investment_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 62,
+        "source_lang": "marathi",
+        "audio_text": "मला माझ्या खात्यातून दहा हजार रुपये काढायचे आहेत",
+        "expected_english": "I want to withdraw ten thousand rupees from my account",
+        "expected_intent": "cash_transaction",
+        "expected_entities": {
+            "amount": "10000"
+        },
+        "expected_counter": "cash_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 63,
+        "source_lang": "marathi",
+        "audio_text": "माझ्या खात्यातून पैसे कापले गेले पण एटीएममधून पैसे आले नाहीत, मला तक्रार करायची आहे",
+        "expected_english": "Money was debited from my account but the ATM did not dispense cash, I want to complain",
+        "expected_intent": "complaint",
+        "expected_entities": {},
+        "expected_counter": "operational_supervisor",
+        "needs_native_review": true
+    },
+    {
+        "id": 64,
+        "source_lang": "marathi",
+        "audio_text": "मला किसान क्रेडिट कार्डसाठी अर्ज करायचा आहे",
+        "expected_english": "I want to apply for a Kisan Credit Card",
+        "expected_intent": "kisan_credit_card",
+        "expected_entities": {},
+        "expected_counter": "specialized_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 65,
+        "source_lang": "marathi",
+        "audio_text": "मला माझ्या मुलाला नॉमिनी म्हणून जोडायचे आहे",
+        "expected_english": "I want to add my son as nominee",
+        "expected_intent": "nomination_update",
+        "expected_entities": {
+            "nominee_relation": "son"
+        },
+        "expected_counter": "service_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 66,
+        "source_lang": "marathi",
+        "audio_text": "माझे डेबिट कार्ड हरवले आहे, ते ब्लॉक करा",
+        "expected_english": "My debit card is lost, please block it",
+        "expected_intent": "debit_card_services",
+        "expected_entities": {},
+        "expected_counter": "service_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 67,
+        "source_lang": "marathi",
+        "audio_text": "बँक किती वाजता बंद होते?",
+        "expected_english": "What time does the bank close?",
+        "expected_intent": "other",
+        "expected_entities": {},
+        "expected_counter": "inquiry_desk",
+        "needs_native_review": true
+    },
+    {
+        "id": 68,
+        "source_lang": "bengali",
+        "audio_text": "আমি আমার মায়ের অ্যাকাউন্টে দশ হাজার টাকা পাঠাতে চাই",
+        "expected_english": "I want to send ten thousand rupees to my mother's account",
+        "expected_intent": "fund_transfer",
+        "expected_entities": {
+            "amount": "10000"
+        },
+        "expected_counter": "service_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 69,
+        "source_lang": "bengali",
+        "audio_text": "আমি আমার অ্যাকাউন্টে পাঁচ হাজার টাকা জমা দিতে চাই",
+        "expected_english": "I want to deposit five thousand rupees in my account",
+        "expected_intent": "cash_transaction",
+        "expected_entities": {
+            "amount": "5000"
+        },
+        "expected_counter": "cash_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 70,
+        "source_lang": "bengali",
+        "audio_text": "আমার দোকানের জন্য দুই লাখ টাকার মুদ্রা লোন চাই",
+        "expected_english": "I want a Mudra loan of two lakh rupees for my shop",
+        "expected_intent": "mudra_loan",
+        "expected_entities": {
+            "amount": "200000"
+        },
+        "expected_counter": "specialized_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 71,
+        "source_lang": "bengali",
+        "audio_text": "আমি আমার সেভিংস অ্যাকাউন্ট বন্ধ করতে চাই",
+        "expected_english": "I want to close my savings account",
+        "expected_intent": "account_closure",
+        "expected_entities": {
+            "account_type": "savings"
+        },
+        "expected_counter": "service_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 72,
+        "source_lang": "bengali",
+        "audio_text": "আমার এফডির জন্য টিডিএস সার্টিফিকেট দরকার",
+        "expected_english": "I need a TDS certificate for my FD",
+        "expected_intent": "tax_certificate_request",
+        "expected_entities": {},
+        "expected_counter": "service_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 73,
+        "source_lang": "bengali",
+        "audio_text": "আমি এক বছরের জন্য পঞ্চাশ হাজার টাকার ফিক্সড ডিপোজিট করতে চাই",
+        "expected_english": "I want to make a fixed deposit of fifty thousand rupees for one year",
+        "expected_intent": "fd_rd_enquiry",
+        "expected_entities": {
+            "amount": "50000",
+            "tenure_months": "12"
+        },
+        "expected_counter": "investment_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 74,
+        "source_lang": "bengali",
+        "audio_text": "আমার টাকা দরকার",
+        "expected_english": "I need money",
+        "expected_intent": "other",
+        "expected_entities": {},
+        "expected_counter": "inquiry_desk",
+        "needs_native_review": true,
+        "expect_clarification": true
+    },
+    {
+        "id": 75,
+        "source_lang": "tamil",
+        "audio_text": "நான் இரண்டு வருடத்திற்கு ஒரு லட்சம் ரூபாய் நிலை வைப்பு செய்ய விரும்புகிறேன்",
+        "expected_english": "I want to make a fixed deposit of one lakh rupees for two years",
+        "expected_intent": "fd_rd_enquiry",
+        "expected_entities": {
+            "amount": "100000",
+            "tenure_months": "24"
+        },
+        "expected_counter": "investment_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 76,
+        "source_lang": "tamil",
+        "audio_text": "என் கணக்கிலிருந்து இருபதாயிரம் ரூபாய் எடுக்க வேண்டும்",
+        "expected_english": "I need to withdraw twenty thousand rupees from my account",
+        "expected_intent": "cash_transaction",
+        "expected_entities": {
+            "amount": "20000"
+        },
+        "expected_counter": "cash_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 77,
+        "source_lang": "tamil",
+        "audio_text": "என் கணக்கில் தவறாக பணம் பிடிக்கப்பட்டது, புகார் செய்ய வேண்டும்",
+        "expected_english": "Money was wrongly deducted from my account, I want to file a complaint",
+        "expected_intent": "complaint",
+        "expected_entities": {},
+        "expected_counter": "operational_supervisor",
+        "needs_native_review": true
+    },
+    {
+        "id": 78,
+        "source_lang": "tamil",
+        "audio_text": "எனக்கு கிசான் கிரெடிட் கார்டு வேண்டும்",
+        "expected_english": "I want a Kisan Credit Card",
+        "expected_intent": "kisan_credit_card",
+        "expected_entities": {},
+        "expected_counter": "specialized_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 79,
+        "source_lang": "tamil",
+        "audio_text": "என் டெபிட் கார்டு பின் மாற்ற வேண்டும்",
+        "expected_english": "I need to change my debit card PIN",
+        "expected_intent": "debit_card_services",
+        "expected_entities": {},
+        "expected_counter": "service_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 80,
+        "source_lang": "tamil",
+        "audio_text": "என் மனைவியை நாமினியாக சேர்க்க வேண்டும்",
+        "expected_english": "I want to add my wife as nominee",
+        "expected_intent": "nomination_update",
+        "expected_entities": {
+            "nominee_relation": "wife"
+        },
+        "expected_counter": "service_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 81,
+        "source_lang": "tamil",
+        "audio_text": "வங்கி எப்போது திறக்கும்?",
+        "expected_english": "When does the bank open?",
+        "expected_intent": "other",
+        "expected_entities": {},
+        "expected_counter": "inquiry_desk",
+        "needs_native_review": true
+    },
+    {
+        "id": 82,
+        "source_lang": "telugu",
+        "audio_text": "నా తమ్ముడి ఖాతాకు ఇరవై వేల రూపాయలు పంపాలి",
+        "expected_english": "I need to send twenty thousand rupees to my younger brother's account",
+        "expected_intent": "fund_transfer",
+        "expected_entities": {
+            "amount": "20000"
+        },
+        "expected_counter": "service_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 83,
+        "source_lang": "telugu",
+        "audio_text": "నా ఖాతాలో పది వేల రూపాయలు జమ చేయాలి",
+        "expected_english": "I need to deposit ten thousand rupees in my account",
+        "expected_intent": "cash_transaction",
+        "expected_entities": {
+            "amount": "10000"
+        },
+        "expected_counter": "cash_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 84,
+        "source_lang": "telugu",
+        "audio_text": "నా వ్యాపారానికి ముద్రా లోన్ కావాలి",
+        "expected_english": "I need a Mudra loan for my business",
+        "expected_intent": "mudra_loan",
+        "expected_entities": {},
+        "expected_counter": "specialized_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 85,
+        "source_lang": "telugu",
+        "audio_text": "నాకు గత ఆర్థిక సంవత్సరం టీడీఎస్ సర్టిఫికేట్ కావాలి",
+        "expected_english": "I need the TDS certificate for the last financial year",
+        "expected_intent": "tax_certificate_request",
+        "expected_entities": {},
+        "expected_counter": "service_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 86,
+        "source_lang": "telugu",
+        "audio_text": "నా కరెంట్ ఖాతా మూసివేయాలి",
+        "expected_english": "I want to close my current account",
+        "expected_intent": "account_closure",
+        "expected_entities": {
+            "account_type": "current"
+        },
+        "expected_counter": "service_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 87,
+        "source_lang": "telugu",
+        "audio_text": "నా చెక్ క్లియర్ కాలేదు, నేను ఫిర్యాదు చేయాలి",
+        "expected_english": "My cheque has not been cleared, I want to complain",
+        "expected_intent": "complaint",
+        "expected_entities": {},
+        "expected_counter": "operational_supervisor",
+        "needs_native_review": true
+    },
+    {
+        "id": 88,
+        "source_lang": "telugu",
+        "audio_text": "నాకు డబ్బులు కావాలి",
+        "expected_english": "I need money",
+        "expected_intent": "other",
+        "expected_entities": {},
+        "expected_counter": "inquiry_desk",
+        "needs_native_review": true,
+        "expect_clarification": true
+    },
+    {
+        "id": 89,
+        "source_lang": "kannada",
+        "audio_text": "ನಾನು ಮೂರು ವರ್ಷಕ್ಕೆ ಎರಡು ಲಕ್ಷ ರೂಪಾಯಿ ಠೇವಣಿ ಇಡಬೇಕು",
+        "expected_english": "I want to deposit two lakh rupees for three years",
+        "expected_intent": "fd_rd_enquiry",
+        "expected_entities": {
+            "amount": "200000",
+            "tenure_months": "36"
+        },
+        "expected_counter": "investment_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 90,
+        "source_lang": "kannada",
+        "audio_text": "ನನ್ನ ಖಾತೆಯಿಂದ ಐದು ಸಾವಿರ ರೂಪಾಯಿ ತೆಗೆಯಬೇಕು",
+        "expected_english": "I need to withdraw five thousand rupees from my account",
+        "expected_intent": "cash_transaction",
+        "expected_entities": {
+            "amount": "5000"
+        },
+        "expected_counter": "cash_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 91,
+        "source_lang": "kannada",
+        "audio_text": "ನನ್ನ ಕೆವೈಸಿ ನವೀಕರಿಸಬೇಕು",
+        "expected_english": "I need to update my KYC",
+        "expected_intent": "kyc_update",
+        "expected_entities": {},
+        "expected_counter": "service_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 92,
+        "source_lang": "kannada",
+        "audio_text": "ನನಗೆ ಕಿಸಾನ್ ಕ್ರೆಡಿಟ್ ಕಾರ್ಡ್ ಬೇಕು",
+        "expected_english": "I want a Kisan Credit Card",
+        "expected_intent": "kisan_credit_card",
+        "expected_entities": {},
+        "expected_counter": "specialized_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 93,
+        "source_lang": "kannada",
+        "audio_text": "ನನ್ನ ಡೆಬಿಟ್ ಕಾರ್ಡ್ ಕಳೆದುಹೋಗಿದೆ, ಬ್ಲಾಕ್ ಮಾಡಿ",
+        "expected_english": "My debit card is lost, please block it",
+        "expected_intent": "debit_card_services",
+        "expected_entities": {},
+        "expected_counter": "service_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 94,
+        "source_lang": "kannada",
+        "audio_text": "ನನ್ನ ಮಗನ ಖಾತೆಗೆ ಹದಿನೈದು ಸಾವಿರ ರೂಪಾಯಿ ಕಳುಹಿಸಬೇಕು",
+        "expected_english": "I need to send fifteen thousand rupees to my son's account",
+        "expected_intent": "fund_transfer",
+        "expected_entities": {
+            "amount": "15000"
+        },
+        "expected_counter": "service_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 95,
+        "source_lang": "kannada",
+        "audio_text": "ನನ್ನ ಮಗಳನ್ನು ನಾಮಿನಿಯಾಗಿ ಸೇರಿಸಬೇಕು",
+        "expected_english": "I want to add my daughter as nominee",
+        "expected_intent": "nomination_update",
+        "expected_entities": {
+            "nominee_relation": "daughter"
+        },
+        "expected_counter": "service_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 96,
+        "source_lang": "kannada",
+        "audio_text": "ಪಾರ್ಕಿಂಗ್ ಎಲ್ಲಿದೆ?",
+        "expected_english": "Where is the parking?",
+        "expected_intent": "other",
+        "expected_entities": {},
+        "expected_counter": "inquiry_desk",
+        "needs_native_review": true
+    },
+    {
+        "id": 97,
+        "source_lang": "gujarati",
+        "audio_text": "મારે એક વર્ષ માટે પચાસ હજાર રૂપિયાની ફિક્સ્ડ ડિપોઝિટ કરવી છે",
+        "expected_english": "I want to make a fixed deposit of fifty thousand rupees for one year",
+        "expected_intent": "fd_rd_enquiry",
+        "expected_entities": {
+            "amount": "50000",
+            "tenure_months": "12"
+        },
+        "expected_counter": "investment_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 98,
+        "source_lang": "gujarati",
+        "audio_text": "મારે મારા ખાતામાં વીસ હજાર રૂપિયા જમા કરાવવા છે",
+        "expected_english": "I want to deposit twenty thousand rupees in my account",
+        "expected_intent": "cash_transaction",
+        "expected_entities": {
+            "amount": "20000"
+        },
+        "expected_counter": "cash_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 99,
+        "source_lang": "gujarati",
+        "audio_text": "મારી દુકાન માટે ત્રણ લાખની મુદ્રા લોન જોઈએ છે",
+        "expected_english": "I need a Mudra loan of three lakh for my shop",
+        "expected_intent": "mudra_loan",
+        "expected_entities": {
+            "amount": "300000"
+        },
+        "expected_counter": "specialized_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 100,
+        "source_lang": "gujarati",
+        "audio_text": "મારા ખાતામાંથી ખોટી રીતે પૈસા કપાયા છે, મારે ફરિયાદ કરવી છે",
+        "expected_english": "Money was wrongly deducted from my account, I want to complain",
+        "expected_intent": "complaint",
+        "expected_entities": {},
+        "expected_counter": "operational_supervisor",
+        "needs_native_review": true
+    },
+    {
+        "id": 101,
+        "source_lang": "gujarati",
+        "audio_text": "મારે ટીડીએસ સર્ટિફિકેટ જોઈએ છે",
+        "expected_english": "I need a TDS certificate",
+        "expected_intent": "tax_certificate_request",
+        "expected_entities": {},
+        "expected_counter": "service_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 102,
+        "source_lang": "gujarati",
+        "audio_text": "મારે મારું ખાતું બંધ કરાવવું છે",
+        "expected_english": "I want to close my account",
+        "expected_intent": "account_closure",
+        "expected_entities": {},
+        "expected_counter": "service_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 103,
+        "source_lang": "gujarati",
+        "audio_text": "મારું સરનામું બદલાયું છે, કેવાયસી અપડેટ કરવું છે",
+        "expected_english": "My address has changed, I want to update my KYC",
+        "expected_intent": "kyc_update",
+        "expected_entities": {},
+        "expected_counter": "service_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 104,
+        "source_lang": "gujarati",
+        "audio_text": "મારે પૈસા જોઈએ છે",
+        "expected_english": "I need money",
+        "expected_intent": "other",
+        "expected_entities": {},
+        "expected_counter": "inquiry_desk",
+        "needs_native_review": true,
+        "expect_clarification": true
+    },
+    {
+        "id": 105,
+        "source_lang": "odia",
+        "audio_text": "ମୋର କେୱାଇସି ଅପଡେଟ କରିବାକୁ ଅଛି",
+        "expected_english": "I need to update my KYC",
+        "expected_intent": "kyc_update",
+        "expected_entities": {},
+        "expected_counter": "service_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 106,
+        "source_lang": "odia",
+        "audio_text": "ମୋତେ ନୂଆ ଚେକ ବହି ଦରକାର",
+        "expected_english": "I need a new cheque book",
+        "expected_intent": "cheque_services",
+        "expected_entities": {},
+        "expected_counter": "service_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 107,
+        "source_lang": "odia",
+        "audio_text": "ମୋ ଖାତାରୁ ଦଶ ହଜାର ଟଙ୍କା ଉଠାଇବାକୁ ଅଛି",
+        "expected_english": "I need to withdraw ten thousand rupees from my account",
+        "expected_intent": "cash_transaction",
+        "expected_entities": {
+            "amount": "10000"
+        },
+        "expected_counter": "cash_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 108,
+        "source_lang": "odia",
+        "audio_text": "ମୁଁ ଏକ ବର୍ଷ ପାଇଁ ଏକ ଲକ୍ଷ ଟଙ୍କା ଫିକ୍ସଡ ଡିପୋଜିଟ କରିବାକୁ ଚାହେଁ",
+        "expected_english": "I want to make a fixed deposit of one lakh rupees for one year",
+        "expected_intent": "fd_rd_enquiry",
+        "expected_entities": {
+            "amount": "100000",
+            "tenure_months": "12"
+        },
+        "expected_counter": "investment_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 109,
+        "source_lang": "odia",
+        "audio_text": "ମୋ ଭାଇର ଖାତାକୁ ପାଞ୍ଚ ହଜାର ଟଙ୍କା ପଠାଇବାକୁ ଅଛି",
+        "expected_english": "I need to send five thousand rupees to my brother's account",
+        "expected_intent": "fund_transfer",
+        "expected_entities": {
+            "amount": "5000"
+        },
+        "expected_counter": "service_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 110,
+        "source_lang": "odia",
+        "audio_text": "ମୋ ଏଟିଏମ କାର୍ଡ କାମ କରୁନାହିଁ, ମୁଁ ଅଭିଯୋଗ କରିବାକୁ ଚାହେଁ",
+        "expected_english": "My ATM card is not working, I want to file a complaint",
+        "expected_intent": "complaint",
+        "expected_entities": {},
+        "expected_counter": "operational_supervisor",
+        "needs_native_review": true
+    },
+    {
+        "id": 111,
+        "source_lang": "odia",
+        "audio_text": "ମୁଁ ମୋ ଖାତା ବନ୍ଦ କରିବାକୁ ଚାହେଁ",
+        "expected_english": "I want to close my account",
+        "expected_intent": "account_closure",
+        "expected_entities": {},
+        "expected_counter": "service_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 112,
+        "source_lang": "odia",
+        "audio_text": "ମୋତେ ଟିଡିଏସ ସର୍ଟିଫିକେଟ ଦରକାର",
+        "expected_english": "I need a TDS certificate",
+        "expected_intent": "tax_certificate_request",
+        "expected_entities": {},
+        "expected_counter": "service_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 113,
+        "source_lang": "odia",
+        "audio_text": "ଶୌଚାଳୟ କେଉଁଠି ଅଛି?",
+        "expected_english": "Where is the toilet?",
+        "expected_intent": "other",
+        "expected_entities": {},
+        "expected_counter": "inquiry_desk",
+        "needs_native_review": true
+    },
+    {
+        "id": 114,
+        "source_lang": "hindi",
+        "audio_text": "Mujhe 2 lakh ka personal loan chahiye 3 saal ke liye",
+        "expected_english": "I need a personal loan of 2 lakh for 3 years",
+        "expected_intent": "loan_enquiry",
+        "expected_entities": {
+            "loan_type": "personal",
+            "amount": "200000",
+            "tenure_months": "36"
+        },
+        "expected_counter": "specialized_counter",
+        "needs_native_review": true,
+        "code_mixed": true
+    },
+    {
+        "id": 115,
+        "source_lang": "hindi",
+        "audio_text": "Mera ATM card block kar do, kho gaya hai",
+        "expected_english": "Please block my ATM card, it is lost",
+        "expected_intent": "debit_card_services",
+        "expected_entities": {},
+        "expected_counter": "service_counter",
+        "needs_native_review": true,
+        "code_mixed": true
+    },
+    {
+        "id": 116,
+        "source_lang": "hindi",
+        "audio_text": "Account mein kitna balance hai check kar do",
+        "expected_english": "Please check how much balance is in the account",
+        "expected_intent": "balance_enquiry",
+        "expected_entities": {},
+        "expected_counter": "inquiry_desk",
+        "needs_native_review": true,
+        "code_mixed": true
+    },
+    {
+        "id": 117,
+        "source_lang": "hindi",
+        "audio_text": "Mujhe 50 hazar cash withdraw karna hai",
+        "expected_english": "I want to withdraw 50 thousand in cash",
+        "expected_intent": "cash_transaction",
+        "expected_entities": {
+            "amount": "50000"
+        },
+        "expected_counter": "cash_counter",
+        "needs_native_review": true,
+        "code_mixed": true
+    },
+    {
+        "id": 118,
+        "source_lang": "hindi",
+        "audio_text": "FD karni hai 1 lakh ki, 5 saal ke liye",
+        "expected_english": "I want to make an FD of 1 lakh for 5 years",
+        "expected_intent": "fd_rd_enquiry",
+        "expected_entities": {
+            "amount": "100000",
+            "tenure_months": "60"
+        },
+        "expected_counter": "investment_counter",
+        "needs_native_review": true,
+        "code_mixed": true
+    },
+    {
+        "id": 119,
+        "source_lang": "hindi",
+        "audio_text": "Bhai ke account mein 10000 NEFT karna hai",
+        "expected_english": "I want to NEFT 10000 to my brother's account",
+        "expected_intent": "fund_transfer",
+        "expected_entities": {
+            "amount": "10000"
+        },
+        "expected_counter": "service_counter",
+        "needs_native_review": true,
+        "code_mixed": true
+    },
+    {
+        "id": 120,
+        "source_lang": "hindi",
+        "audio_text": "KYC update karna hai, naya address hai",
+        "expected_english": "I want to update KYC, I have a new address",
+        "expected_intent": "kyc_update",
+        "expected_entities": {},
+        "expected_counter": "service_counter",
+        "needs_native_review": true,
+        "code_mixed": true
+    },
+    {
+        "id": 121,
+        "source_lang": "hindi",
+        "audio_text": "Mujhe apni wife ko nominee banana hai",
+        "expected_english": "I want to make my wife the nominee",
+        "expected_intent": "nomination_update",
+        "expected_entities": {
+            "nominee_relation": "wife"
+        },
+        "expected_counter": "service_counter",
+        "needs_native_review": true,
+        "code_mixed": true
+    },
+    {
+        "id": 122,
+        "source_lang": "hindi",
+        "audio_text": "Cheque book khatam ho gayi, nayi chahiye",
+        "expected_english": "My cheque book is finished, I need a new one",
+        "expected_intent": "cheque_services",
+        "expected_entities": {},
+        "expected_counter": "service_counter",
+        "needs_native_review": true,
+        "code_mixed": true
+    },
+    {
+        "id": 123,
+        "source_lang": "hindi",
+        "audio_text": "Mere account se galat paisa kat gaya, complaint karni hai",
+        "expected_english": "Money was wrongly deducted from my account, I want to complain",
+        "expected_intent": "complaint",
+        "expected_entities": {},
+        "expected_counter": "operational_supervisor",
+        "needs_native_review": true,
+        "code_mixed": true
+    },
+    {
+        "id": 124,
+        "source_lang": "hindi",
+        "audio_text": "Kuch paise chahiye the",
+        "expected_english": "I needed some money",
+        "expected_intent": "other",
+        "expected_entities": {},
+        "expected_counter": "inquiry_desk",
+        "needs_native_review": true,
+        "expect_clarification": true,
+        "code_mixed": true
+    },
+    {
+        "id": 125,
+        "source_lang": "hindi",
+        "audio_text": "Mudra loan ke liye kya documents chahiye?",
+        "expected_english": "What documents are needed for a Mudra loan?",
+        "expected_intent": "mudra_loan",
+        "expected_entities": {},
+        "expected_counter": "specialized_counter",
+        "needs_native_review": true,
+        "code_mixed": true
+    },
+    {
+        "id": 126,
+        "source_lang": "english",
+        "audio_text": "I want to deposit 20000 rupees in cash",
+        "expected_english": "I want to deposit 20000 rupees in cash",
+        "expected_intent": "cash_transaction",
+        "expected_entities": {
+            "amount": "20000"
+        },
+        "expected_counter": "cash_counter",
+        "needs_native_review": false
+    },
+    {
+        "id": 127,
+        "source_lang": "english",
+        "audio_text": "Can I withdraw 5000 from my savings account?",
+        "expected_english": "Can I withdraw 5000 from my savings account?",
+        "expected_intent": "cash_transaction",
+        "expected_entities": {
+            "amount": "5000",
+            "account_type": "savings"
+        },
+        "expected_counter": "cash_counter",
+        "needs_native_review": false
+    },
+    {
+        "id": 128,
+        "source_lang": "english",
+        "audio_text": "I need some money",
+        "expected_english": "I need some money",
+        "expected_intent": "other",
+        "expected_entities": {},
+        "expected_counter": "inquiry_desk",
+        "needs_native_review": false,
+        "expect_clarification": true
+    },
+    {
+        "id": 129,
+        "source_lang": "english",
+        "audio_text": "Give me money",
+        "expected_english": "Give me money",
+        "expected_intent": "other",
+        "expected_entities": {},
+        "expected_counter": "inquiry_desk",
+        "needs_native_review": false,
+        "expect_clarification": true
+    },
+    {
+        "id": 130,
+        "source_lang": "english",
+        "audio_text": "What time does the branch close today?",
+        "expected_english": "What time does the branch close today?",
+        "expected_intent": "other",
+        "expected_entities": {},
+        "expected_counter": "inquiry_desk",
+        "needs_native_review": false
+    },
+    {
+        "id": 131,
+        "source_lang": "english",
+        "audio_text": "Is there a parking space nearby?",
+        "expected_english": "Is there a parking space nearby?",
+        "expected_intent": "other",
+        "expected_entities": {},
+        "expected_counter": "inquiry_desk",
+        "needs_native_review": false
+    },
+    {
+        "id": 132,
+        "source_lang": "english",
+        "audio_text": "Can I get a glass of water?",
+        "expected_english": "Can I get a glass of water?",
+        "expected_intent": "other",
+        "expected_entities": {},
+        "expected_counter": "inquiry_desk",
+        "needs_native_review": false
+    },
+    {
+        "id": 133,
+        "source_lang": "english",
+        "audio_text": "I want to start a recurring deposit of 2000 rupees a month for 2 years",
+        "expected_english": "I want to start a recurring deposit of 2000 rupees a month for 2 years",
+        "expected_intent": "fd_rd_enquiry",
+        "expected_entities": {
+            "amount": "2000",
+            "tenure_months": "24"
+        },
+        "expected_counter": "investment_counter",
+        "needs_native_review": false
+    },
+    {
+        "id": 134,
+        "source_lang": "english",
+        "audio_text": "I want to transfer 1 lakh to my daughter's account through RTGS",
+        "expected_english": "I want to transfer 1 lakh to my daughter's account through RTGS",
+        "expected_intent": "fund_transfer",
+        "expected_entities": {
+            "amount": "100000",
+            "transfer_mode": "RTGS"
+        },
+        "expected_counter": "service_counter",
+        "needs_native_review": false
+    },
+    {
+        "id": 135,
+        "source_lang": "english",
+        "audio_text": "I need Form 16A for the interest on my fixed deposit",
+        "expected_english": "I need Form 16A for the interest on my fixed deposit",
+        "expected_intent": "tax_certificate_request",
+        "expected_entities": {},
+        "expected_counter": "service_counter",
+        "needs_native_review": false
+    },
+    {
+        "id": 136,
+        "source_lang": "english",
+        "audio_text": "I want to close my savings account because I am moving to another city",
+        "expected_english": "I want to close my savings account because I am moving to another city",
+        "expected_intent": "account_closure",
+        "expected_entities": {
+            "account_type": "savings"
+        },
+        "expected_counter": "service_counter",
+        "needs_native_review": false
+    },
+    {
+        "id": 137,
+        "source_lang": "english",
+        "audio_text": "My salary is 60000 a month, how much home loan can I get?",
+        "expected_english": "My salary is 60000 a month, how much home loan can I get?",
+        "expected_intent": "loan_enquiry",
+        "expected_entities": {
+            "loan_type": "home",
+            "monthly_income": "60000"
+        },
+        "expected_counter": "specialized_counter",
+        "needs_native_review": false
+    },
+    {
+        "id": 138,
+        "source_lang": "hindi",
+        "audio_text": "मुझे अपने खाते में दस हजार रुपये जमा करने हैं",
+        "expected_english": "I want to deposit ten thousand rupees in my account",
+        "expected_intent": "cash_transaction",
+        "expected_entities": {
+            "amount": "10000"
+        },
+        "expected_counter": "cash_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 139,
+        "source_lang": "hindi",
+        "audio_text": "मुझे पाँच हजार रुपये निकालने हैं",
+        "expected_english": "I want to withdraw five thousand rupees",
+        "expected_intent": "cash_transaction",
+        "expected_entities": {
+            "amount": "5000"
+        },
+        "expected_counter": "cash_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 140,
+        "source_lang": "hindi",
+        "audio_text": "मुझे पैसों की ज़रूरत है",
+        "expected_english": "I need money",
+        "expected_intent": "other",
+        "expected_entities": {},
+        "expected_counter": "inquiry_desk",
+        "needs_native_review": true,
+        "expect_clarification": true
+    },
+    {
+        "id": 141,
+        "source_lang": "hindi",
+        "audio_text": "मैनेजर साहब कहाँ बैठते हैं?",
+        "expected_english": "Where does the manager sit?",
+        "expected_intent": "other",
+        "expected_entities": {},
+        "expected_counter": "inquiry_desk",
+        "needs_native_review": true
+    },
+    {
+        "id": 142,
+        "source_lang": "hindi",
+        "audio_text": "मुझे हर महीने दो हजार की आरडी दो साल के लिए खुलवानी है",
+        "expected_english": "I want to open an RD of two thousand every month for two years",
+        "expected_intent": "fd_rd_enquiry",
+        "expected_entities": {
+            "amount": "2000",
+            "tenure_months": "24"
+        },
+        "expected_counter": "investment_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 143,
+        "source_lang": "hindi",
+        "audio_text": "मुझे पिछले साल का टीडीएस सर्टिफिकेट चाहिए",
+        "expected_english": "I need last year's TDS certificate",
+        "expected_intent": "tax_certificate_request",
+        "expected_entities": {},
+        "expected_counter": "service_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 144,
+        "source_lang": "hindi",
+        "audio_text": "मेरी बेटी को नॉमिनी बनाना है",
+        "expected_english": "I want to make my daughter the nominee",
+        "expected_intent": "nomination_update",
+        "expected_entities": {
+            "nominee_relation": "daughter"
+        },
+        "expected_counter": "service_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 145,
+        "source_lang": "hindi",
+        "audio_text": "मेरे खाते से गलत तरीके से पैसे कट गए हैं, मुझे शिकायत करनी है",
+        "expected_english": "Money has been wrongly deducted from my account, I want to file a complaint",
+        "expected_intent": "complaint",
+        "expected_entities": {},
+        "expected_counter": "operational_supervisor",
+        "needs_native_review": true
+    },
+    {
+        "id": 146,
+        "source_lang": "hindi",
+        "audio_text": "मुझे अपना चालू खाता बंद करना है",
+        "expected_english": "I want to close my current account",
+        "expected_intent": "account_closure",
+        "expected_entities": {
+            "account_type": "current"
+        },
+        "expected_counter": "service_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 147,
+        "source_lang": "hindi",
+        "audio_text": "मुझे किसान क्रेडिट कार्ड की लिमिट बढ़वानी है",
+        "expected_english": "I want to increase my Kisan Credit Card limit",
+        "expected_intent": "kisan_credit_card",
+        "expected_entities": {},
+        "expected_counter": "specialized_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 148,
+        "source_lang": "hindi",
+        "audio_text": "मेरे डेबिट कार्ड का पिन बदलना है",
+        "expected_english": "I want to change my debit card PIN",
+        "expected_intent": "debit_card_services",
+        "expected_entities": {},
+        "expected_counter": "service_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 149,
+        "source_lang": "hindi",
+        "audio_text": "मुझे अपने बेटे के खाते में आरटीजीएस से दो लाख भेजने हैं",
+        "expected_english": "I want to send two lakh to my son's account by RTGS",
+        "expected_intent": "fund_transfer",
+        "expected_entities": {
+            "amount": "200000",
+            "transfer_mode": "RTGS"
+        },
+        "expected_counter": "service_counter",
+        "needs_native_review": true
+    },
+    {
+        "id": 150,
+        "source_lang": "hindi",
+        "audio_text": "मुझे अपनी दुकान के लिए पचास हजार का मुद्रा लोन चाहिए",
+        "expected_english": "I want a Mudra loan of fifty thousand for my shop",
+        "expected_intent": "mudra_loan",
+        "expected_entities": {
+            "amount": "50000"
         },
         "expected_counter": "specialized_counter",
         "needs_native_review": true

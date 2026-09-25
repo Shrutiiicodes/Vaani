@@ -1,0 +1,57 @@
+# Evaluation
+
+Three independent measurements. Each says exactly what it covers.
+
+| Script | Measures | Needs |
+|---|---|---|
+| `run_eval.py` | Language pipeline on gold text: translation, intent, entities, counter, clarification | `GROQ_API_KEY` |
+| `run_stt_eval.py` | Whisper speech-to-text: WER, CER, language identification | `GROQ_API_KEY` |
+| `load_test.py` | End-to-end latency under concurrent load, against a running server | a running server |
+
+## Language pipeline (`run_eval.py`)
+
+`test_cases.json` holds 150 cases across 9 languages (12 per regional language, 27 English, 39 Hindi including 13 code-mixed Hinglish). Every intent has at least 6 cases, and 8 cases are deliberately vague money requests that should trigger a clarifying question.
+
+Honest limits:
+
+- **Whisper is bypassed.** Gold text goes straight into the pipeline, so this is accuracy *given a correct transcript*.
+- **The author wrote the non-English cases.** They are flagged `needs_native_review` and have not yet been checked by native speakers.
+- **Counter accuracy is soft.** The LLM picks the counter, and some requests could reasonably go to two counters.
+- **Entity scoring only covers annotated slots.** Extra predicted keys are not penalised.
+
+```bash
+python backend/eval/run_eval.py              # ~25 min on Groq's free tier (8k tokens/min)
+python backend/eval/run_eval.py --limit 10 --delay 2
+python backend/eval/run_eval.py --model qwen/qwen3.8-27b --out eval_results_qwen.json --markdown RESULTS_qwen.md
+python backend/eval/run_eval.py --mock       # re-score saved results offline (used in CI)
+```
+
+Results land in `RESULTS.md` and `eval_results.json`. `baseline_llama33_60cases.json` is the original 60-case run on the retired `llama-3.3-70b-versatile`, kept for comparison. Re-score it with `--mock --out baseline_llama33_60cases.json`.
+
+## Speech-to-text (`run_stt_eval.py`)
+
+Clips are listed in `audio/manifest.json`. The committed clips are **synthetic**: gold sentences voiced by Microsoft neural TTS with two voices per language. Clean studio speech flatters Whisper, so treat these numbers as an upper bound. Results are always split by `source`.
+
+To add real recordings, drop files into `audio/human/` and add entries with `"source": "human"`:
+
+```json
+{"file": "human/hindi_01.m4a", "language": "hindi", "text": "मुझे नई चेक बुक चाहिए", "source": "human"}
+```
+
+```bash
+python backend/eval/run_stt_eval.py          # auto-detect language
+python backend/eval/run_stt_eval.py --hint   # pass the known language, as the UI's language picker does
+python backend/eval/run_stt_eval.py --synthesize 4   # add 4 more synthetic clips per language
+```
+
+Odia is excluded because Whisper does not support it and no TTS voice exists for it.
+
+## Load (`load_test.py`)
+
+This fires N simultaneous customer turns at a running server. With no clip given, it synthesises a Hindi home-loan request, which exercises every stage: speech-to-text, LLM, EMI calculation, translated readout and TTS.
+
+```bash
+python backend/eval/load_test.py --password "$STAFF_PASSWORD" --levels 1 4
+```
+
+Keep concurrency at 4 or below on Groq's free tier. Beyond that you are measuring Groq's rate-limit back-off, not the app. Restart the server between runs: translations and speech are cached, so a repeated clip gets faster and the numbers stop being honest.
