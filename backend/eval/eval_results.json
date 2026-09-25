@@ -1,0 +1,3180 @@
+{
+  "summary": {
+    "model": "qwen/qwen3.8-27b",
+    "n_scored": 148,
+    "n_errors": 2,
+    "intent_accuracy": 0.9864864864864865,
+    "counter_accuracy": 0.9594594594594594,
+    "entity_precision": 1.0,
+    "entity_recall": 1.0,
+    "entity_f1": 1.0,
+    "entity_slots": {
+      "tp": 89,
+      "fp": 0,
+      "fn": 0
+    },
+    "clarification_recall": 1.0,
+    "clarification_false_alarm_rate": 0.0,
+    "code_mixed_intent_accuracy": 1.0,
+    "original_60": {
+      "n": 60,
+      "intent_accuracy": 1.0,
+      "entity_f1": 1.0
+    },
+    "latency_llm_stage": {
+      "mean": 1.3220202702702704,
+      "p50": 0.485,
+      "p95": 0.732
+    },
+    "per_language_intent": {
+      "bengali": {
+        "correct": 12,
+        "total": 12
+      },
+      "english": {
+        "correct": 26,
+        "total": 27
+      },
+      "gujarati": {
+        "correct": 12,
+        "total": 12
+      },
+      "hindi": {
+        "correct": 38,
+        "total": 39
+      },
+      "kannada": {
+        "correct": 12,
+        "total": 12
+      },
+      "marathi": {
+        "correct": 12,
+        "total": 12
+      },
+      "odia": {
+        "correct": 10,
+        "total": 10
+      },
+      "tamil": {
+        "correct": 12,
+        "total": 12
+      },
+      "telugu": {
+        "correct": 12,
+        "total": 12
+      }
+    },
+    "per_intent": {
+      "account_closure": {
+        "correct": 9,
+        "total": 9
+      },
+      "account_opening": {
+        "correct": 9,
+        "total": 9
+      },
+      "balance_enquiry": {
+        "correct": 10,
+        "total": 10
+      },
+      "cash_transaction": {
+        "correct": 12,
+        "total": 12
+      },
+      "cheque_services": {
+        "correct": 10,
+        "total": 10
+      },
+      "complaint": {
+        "correct": 9,
+        "total": 9
+      },
+      "debit_card_services": {
+        "correct": 7,
+        "total": 7
+      },
+      "fd_rd_enquiry": {
+        "correct": 9,
+        "total": 11
+      },
+      "fund_transfer": {
+        "correct": 8,
+        "total": 8
+      },
+      "kisan_credit_card": {
+        "correct": 6,
+        "total": 6
+      },
+      "kyc_update": {
+        "correct": 9,
+        "total": 9
+      },
+      "loan_enquiry": {
+        "correct": 11,
+        "total": 11
+      },
+      "mudra_loan": {
+        "correct": 7,
+        "total": 7
+      },
+      "nomination_update": {
+        "correct": 7,
+        "total": 7
+      },
+      "other": {
+        "correct": 17,
+        "total": 17
+      },
+      "tax_certificate_request": {
+        "correct": 6,
+        "total": 6
+      }
+    },
+    "top_confusions": [
+      {
+        "expected": "fd_rd_enquiry",
+        "predicted": "account_opening",
+        "count": 2
+      }
+    ],
+    "note": "Gold-text input: STT (Whisper) is not included. Counter accuracy is a soft metric.",
+    "bleu": 70.7763597396528
+  },
+  "details": [
+    {
+      "id": 1,
+      "lang": "english",
+      "intent_expected": "account_opening",
+      "intent_pred": "account_opening",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "account_type": "savings"
+      },
+      "entities_pred": {
+        "account_type": "savings"
+      },
+      "ent_tp": 1,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want to open a new savings account",
+      "latency_s": 0.87
+    },
+    {
+      "id": 2,
+      "lang": "english",
+      "intent_expected": "balance_enquiry",
+      "intent_pred": "balance_enquiry",
+      "intent_ok": true,
+      "counter_expected": "inquiry_desk",
+      "counter_pred": "inquiry_desk",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "What is the balance in my account?",
+      "latency_s": 0.473
+    },
+    {
+      "id": 3,
+      "lang": "english",
+      "intent_expected": "fd_rd_enquiry",
+      "intent_pred": "fd_rd_enquiry",
+      "intent_ok": true,
+      "counter_expected": "investment_counter",
+      "counter_pred": "investment_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "amount": "200000",
+        "tenure_months": "36"
+      },
+      "entities_pred": {
+        "account_type": "fd",
+        "amount": "200000",
+        "tenure_months": "36"
+      },
+      "ent_tp": 2,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want to open a fixed deposit of 2 lakhs for 3 years",
+      "latency_s": 0.523
+    },
+    {
+      "id": 4,
+      "lang": "english",
+      "intent_expected": "loan_enquiry",
+      "intent_pred": "loan_enquiry",
+      "intent_ok": true,
+      "counter_expected": "specialized_counter",
+      "counter_pred": "specialized_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "loan_type": "home",
+        "amount": "5000000",
+        "tenure_months": "240"
+      },
+      "entities_pred": {
+        "amount": "5000000",
+        "tenure_months": "240",
+        "loan_type": "home"
+      },
+      "ent_tp": 3,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need a home loan of 50 lakhs for 20 years",
+      "latency_s": 0.569
+    },
+    {
+      "id": 5,
+      "lang": "english",
+      "intent_expected": "kyc_update",
+      "intent_pred": "kyc_update",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want to update my KYC, my address has changed",
+      "latency_s": 0.515
+    },
+    {
+      "id": 6,
+      "lang": "english",
+      "intent_expected": "complaint",
+      "intent_pred": "complaint",
+      "intent_ok": true,
+      "counter_expected": "operational_supervisor",
+      "counter_pred": "service_counter",
+      "counter_ok": false,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "My debit card is not working and I want to file a complaint",
+      "latency_s": 0.464
+    },
+    {
+      "id": 7,
+      "lang": "english",
+      "intent_expected": "fund_transfer",
+      "intent_pred": "fund_transfer",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "amount": "25000"
+      },
+      "entities_pred": {
+        "amount": "25000",
+        "beneficiary_relation": "brother"
+      },
+      "ent_tp": 1,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want to transfer 25000 rupees to my brother's account",
+      "latency_s": 0.442
+    },
+    {
+      "id": 8,
+      "lang": "english",
+      "intent_expected": "account_closure",
+      "intent_pred": "account_closure",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "account_type": "current"
+      },
+      "entities_pred": {
+        "account_type": "current"
+      },
+      "ent_tp": 1,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want to close my current account",
+      "latency_s": 0.636
+    },
+    {
+      "id": 9,
+      "lang": "english",
+      "intent_expected": "cheque_services",
+      "intent_pred": "cheque_services",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need a new chequebook",
+      "latency_s": 0.389
+    },
+    {
+      "id": 10,
+      "lang": "english",
+      "intent_expected": "nomination_update",
+      "intent_pred": "nomination_update",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "nominee_relation": "wife"
+      },
+      "entities_pred": {
+        "nominee_relation": "wife"
+      },
+      "ent_tp": 1,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want to add my wife as nominee",
+      "latency_s": 0.475
+    },
+    {
+      "id": 11,
+      "lang": "english",
+      "intent_expected": "mudra_loan",
+      "intent_pred": "mudra_loan",
+      "intent_ok": true,
+      "counter_expected": "specialized_counter",
+      "counter_pred": "specialized_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "amount": "500000"
+      },
+      "entities_pred": {
+        "loan_type": "Mudra",
+        "amount": "500000"
+      },
+      "ent_tp": 1,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need a Mudra loan of 5 lakhs for my shop",
+      "latency_s": 0.691
+    },
+    {
+      "id": 12,
+      "lang": "english",
+      "intent_expected": "kisan_credit_card",
+      "intent_pred": "kisan_credit_card",
+      "intent_ok": true,
+      "counter_expected": "specialized_counter",
+      "counter_pred": "specialized_counter",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {
+        "loan_type": "Kisan Credit Card"
+      },
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want to apply for a Kisan Credit Card",
+      "latency_s": 0.49
+    },
+    {
+      "id": 13,
+      "lang": "english",
+      "intent_expected": "debit_card_services",
+      "intent_pred": "debit_card_services",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want to block my debit card",
+      "latency_s": 0.532
+    },
+    {
+      "id": 14,
+      "lang": "english",
+      "intent_expected": "tax_certificate_request",
+      "intent_pred": "tax_certificate_request",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need a TDS certificate for the last financial year",
+      "latency_s": 0.467
+    },
+    {
+      "id": 15,
+      "lang": "english",
+      "intent_expected": "other",
+      "intent_pred": "other",
+      "intent_ok": true,
+      "counter_expected": "inquiry_desk",
+      "counter_pred": "inquiry_desk",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "Where is the washroom?",
+      "latency_s": 0.587
+    },
+    {
+      "id": 16,
+      "lang": "hindi",
+      "intent_expected": "account_opening",
+      "intent_pred": "account_opening",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "account_type": "savings"
+      },
+      "entities_pred": {
+        "account_type": "savings"
+      },
+      "ent_tp": 1,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want to open a new savings account.",
+      "latency_s": 0.545
+    },
+    {
+      "id": 17,
+      "lang": "hindi",
+      "intent_expected": "balance_enquiry",
+      "intent_pred": "balance_enquiry",
+      "intent_ok": true,
+      "counter_expected": "inquiry_desk",
+      "counter_pred": "inquiry_desk",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "How much money is in my account?",
+      "latency_s": 0.446
+    },
+    {
+      "id": 18,
+      "lang": "hindi",
+      "intent_expected": "fd_rd_enquiry",
+      "intent_pred": "fd_rd_enquiry",
+      "intent_ok": true,
+      "counter_expected": "investment_counter",
+      "counter_pred": "investment_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "amount": "200000",
+        "tenure_months": "36"
+      },
+      "entities_pred": {
+        "amount": "200000",
+        "tenure_months": "36",
+        "account_type": "fd"
+      },
+      "ent_tp": 2,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want to open a Fixed Deposit of two lakh for three years.",
+      "latency_s": 0.628
+    },
+    {
+      "id": 19,
+      "lang": "hindi",
+      "intent_expected": "loan_enquiry",
+      "intent_pred": "loan_enquiry",
+      "intent_ok": true,
+      "counter_expected": "specialized_counter",
+      "counter_pred": "specialized_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "loan_type": "home",
+        "amount": "5000000",
+        "tenure_months": "240"
+      },
+      "entities_pred": {
+        "amount": "5000000",
+        "tenure_months": "240",
+        "loan_type": "home"
+      },
+      "ent_tp": 3,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need a loan of fifty lakhs for my house, for twenty years.",
+      "latency_s": 0.566
+    },
+    {
+      "id": 20,
+      "lang": "hindi",
+      "intent_expected": "kyc_update",
+      "intent_pred": "kyc_update",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {
+        "address": "changed"
+      },
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need to update my KYC, my address has changed.",
+      "latency_s": 0.667
+    },
+    {
+      "id": 21,
+      "lang": "hindi",
+      "intent_expected": "complaint",
+      "intent_pred": "complaint",
+      "intent_ok": true,
+      "counter_expected": "operational_supervisor",
+      "counter_pred": "service_counter",
+      "counter_ok": false,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "My ATM card is not working, I want to register a complaint.",
+      "latency_s": 0.49
+    },
+    {
+      "id": 22,
+      "lang": "hindi",
+      "intent_expected": "fund_transfer",
+      "intent_pred": "fund_transfer",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "amount": "25000"
+      },
+      "entities_pred": {
+        "amount": "25000",
+        "beneficiary_relation": "brother"
+      },
+      "ent_tp": 1,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need to send twenty-five thousand rupees to my brother's account.",
+      "latency_s": 0.508
+    },
+    {
+      "id": 23,
+      "lang": "hindi",
+      "intent_expected": "account_closure",
+      "intent_pred": "account_closure",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want to close my account.",
+      "latency_s": 0.734
+    },
+    {
+      "id": 24,
+      "lang": "hindi",
+      "intent_expected": "cheque_services",
+      "intent_pred": "cheque_services",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need a new cheque book.",
+      "latency_s": 0.454
+    },
+    {
+      "id": 25,
+      "lang": "hindi",
+      "intent_expected": "nomination_update",
+      "intent_pred": "nomination_update",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "nominee_relation": "wife"
+      },
+      "entities_pred": {
+        "nominee_relation": "wife"
+      },
+      "ent_tp": 1,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want to make my wife my nominee.",
+      "latency_s": 0.589
+    },
+    {
+      "id": 26,
+      "lang": "hindi",
+      "intent_expected": "mudra_loan",
+      "intent_pred": "mudra_loan",
+      "intent_ok": true,
+      "counter_expected": "specialized_counter",
+      "counter_pred": "specialized_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "amount": "500000"
+      },
+      "entities_pred": {
+        "amount": "500000",
+        "loan_type": "mudra"
+      },
+      "ent_tp": 1,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need a Mudra loan of five lakhs for my shop.",
+      "latency_s": 0.649
+    },
+    {
+      "id": 27,
+      "lang": "hindi",
+      "intent_expected": "kisan_credit_card",
+      "intent_pred": "kisan_credit_card",
+      "intent_ok": true,
+      "counter_expected": "specialized_counter",
+      "counter_pred": "specialized_counter",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {
+        "loan_type": "Kisan Credit Card"
+      },
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want to get a Kisan Credit Card made.",
+      "latency_s": 0.571
+    },
+    {
+      "id": 28,
+      "lang": "hindi",
+      "intent_expected": "debit_card_services",
+      "intent_pred": "debit_card_services",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want to block my debit card.",
+      "latency_s": 0.458
+    },
+    {
+      "id": 29,
+      "lang": "hindi",
+      "intent_expected": "other",
+      "intent_pred": "other",
+      "intent_ok": true,
+      "counter_expected": "inquiry_desk",
+      "counter_pred": "inquiry_desk",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": true,
+      "english_pred": "I need money.",
+      "latency_s": 0.449
+    },
+    {
+      "id": 30,
+      "lang": "marathi",
+      "intent_expected": "account_opening",
+      "intent_pred": "account_opening",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "account_type": "savings"
+      },
+      "entities_pred": {
+        "account_type": "savings"
+      },
+      "ent_tp": 1,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want to open a new savings account.",
+      "latency_s": 0.486
+    },
+    {
+      "id": 31,
+      "lang": "marathi",
+      "intent_expected": "balance_enquiry",
+      "intent_pred": "balance_enquiry",
+      "intent_ok": true,
+      "counter_expected": "inquiry_desk",
+      "counter_pred": "inquiry_desk",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "How much money is in my account?",
+      "latency_s": 0.465
+    },
+    {
+      "id": 32,
+      "lang": "marathi",
+      "intent_expected": "loan_enquiry",
+      "intent_pred": "loan_enquiry",
+      "intent_ok": true,
+      "counter_expected": "specialized_counter",
+      "counter_pred": "specialized_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "loan_type": "home"
+      },
+      "entities_pred": {
+        "loan_type": "home"
+      },
+      "ent_tp": 1,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need a loan for a house.",
+      "latency_s": 0.494
+    },
+    {
+      "id": 33,
+      "lang": "marathi",
+      "intent_expected": "kyc_update",
+      "intent_pred": "kyc_update",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want to update my KYC.",
+      "latency_s": 0.432
+    },
+    {
+      "id": 34,
+      "lang": "marathi",
+      "intent_expected": "cheque_services",
+      "intent_pred": "cheque_services",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need a new cheque book.",
+      "latency_s": 0.522
+    },
+    {
+      "id": 35,
+      "lang": "bengali",
+      "intent_expected": "account_opening",
+      "intent_pred": "account_opening",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "account_type": "savings"
+      },
+      "entities_pred": {
+        "account_type": "savings"
+      },
+      "ent_tp": 1,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want to open a new savings account.",
+      "latency_s": 0.716
+    },
+    {
+      "id": 36,
+      "lang": "bengali",
+      "intent_expected": "balance_enquiry",
+      "intent_pred": "balance_enquiry",
+      "intent_ok": true,
+      "counter_expected": "inquiry_desk",
+      "counter_pred": "inquiry_desk",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "How much money is in my account?",
+      "latency_s": 0.359
+    },
+    {
+      "id": 37,
+      "lang": "bengali",
+      "intent_expected": "loan_enquiry",
+      "intent_pred": "loan_enquiry",
+      "intent_ok": true,
+      "counter_expected": "specialized_counter",
+      "counter_pred": "specialized_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "loan_type": "home"
+      },
+      "entities_pred": {
+        "loan_type": "home"
+      },
+      "ent_tp": 1,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need a home loan.",
+      "latency_s": 0.652
+    },
+    {
+      "id": 38,
+      "lang": "bengali",
+      "intent_expected": "kyc_update",
+      "intent_pred": "kyc_update",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want to update my KYC.",
+      "latency_s": 0.452
+    },
+    {
+      "id": 39,
+      "lang": "bengali",
+      "intent_expected": "cheque_services",
+      "intent_pred": "cheque_services",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need a new chequebook.",
+      "latency_s": 0.474
+    },
+    {
+      "id": 40,
+      "lang": "tamil",
+      "intent_expected": "account_opening",
+      "intent_pred": "account_opening",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "account_type": "savings"
+      },
+      "entities_pred": {
+        "account_type": "savings"
+      },
+      "ent_tp": 1,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need to open a new savings account.",
+      "latency_s": 0.398
+    },
+    {
+      "id": 41,
+      "lang": "tamil",
+      "intent_expected": "balance_enquiry",
+      "intent_pred": "balance_enquiry",
+      "intent_ok": true,
+      "counter_expected": "inquiry_desk",
+      "counter_pred": "inquiry_desk",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "How much money is in my account?",
+      "latency_s": 0.446
+    },
+    {
+      "id": 42,
+      "lang": "tamil",
+      "intent_expected": "loan_enquiry",
+      "intent_pred": "loan_enquiry",
+      "intent_ok": true,
+      "counter_expected": "specialized_counter",
+      "counter_pred": "specialized_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "loan_type": "home"
+      },
+      "entities_pred": {
+        "loan_type": "home"
+      },
+      "ent_tp": 1,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need a home loan.",
+      "latency_s": 0.504
+    },
+    {
+      "id": 43,
+      "lang": "tamil",
+      "intent_expected": "cheque_services",
+      "intent_pred": "cheque_services",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need a new cheque book.",
+      "latency_s": 0.454
+    },
+    {
+      "id": 44,
+      "lang": "tamil",
+      "intent_expected": "account_closure",
+      "intent_pred": "account_closure",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want to close my account.",
+      "latency_s": 0.538
+    },
+    {
+      "id": 45,
+      "lang": "telugu",
+      "intent_expected": "account_opening",
+      "intent_pred": "account_opening",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "account_type": "savings"
+      },
+      "entities_pred": {
+        "account_type": "savings"
+      },
+      "ent_tp": 1,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want to open a new savings account.",
+      "latency_s": 0.472
+    },
+    {
+      "id": 46,
+      "lang": "telugu",
+      "intent_expected": "balance_enquiry",
+      "intent_pred": "balance_enquiry",
+      "intent_ok": true,
+      "counter_expected": "inquiry_desk",
+      "counter_pred": "inquiry_desk",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "How much money is in my account?",
+      "latency_s": 0.396
+    },
+    {
+      "id": 47,
+      "lang": "telugu",
+      "intent_expected": "loan_enquiry",
+      "intent_pred": "loan_enquiry",
+      "intent_ok": true,
+      "counter_expected": "specialized_counter",
+      "counter_pred": "specialized_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "loan_type": "home"
+      },
+      "entities_pred": {
+        "loan_type": "home"
+      },
+      "ent_tp": 1,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need a home loan.",
+      "latency_s": 0.661
+    },
+    {
+      "id": 48,
+      "lang": "telugu",
+      "intent_expected": "kyc_update",
+      "intent_pred": "kyc_update",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need to update my KYC.",
+      "latency_s": 0.411
+    },
+    {
+      "id": 49,
+      "lang": "telugu",
+      "intent_expected": "cheque_services",
+      "intent_pred": "cheque_services",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need a new cheque book.",
+      "latency_s": 0.412
+    },
+    {
+      "id": 50,
+      "lang": "kannada",
+      "intent_expected": "account_opening",
+      "intent_pred": "account_opening",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "account_type": "savings"
+      },
+      "entities_pred": {
+        "account_type": "savings"
+      },
+      "ent_tp": 1,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need to open a new savings account.",
+      "latency_s": 0.509
+    },
+    {
+      "id": 51,
+      "lang": "kannada",
+      "intent_expected": "balance_enquiry",
+      "intent_pred": "balance_enquiry",
+      "intent_ok": true,
+      "counter_expected": "inquiry_desk",
+      "counter_pred": "inquiry_desk",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "How much money is in my account?",
+      "latency_s": 0.403
+    },
+    {
+      "id": 52,
+      "lang": "kannada",
+      "intent_expected": "loan_enquiry",
+      "intent_pred": "loan_enquiry",
+      "intent_ok": true,
+      "counter_expected": "specialized_counter",
+      "counter_pred": "specialized_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "loan_type": "home"
+      },
+      "entities_pred": {
+        "loan_type": "home"
+      },
+      "ent_tp": 1,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need a home loan.",
+      "latency_s": 0.485
+    },
+    {
+      "id": 53,
+      "lang": "kannada",
+      "intent_expected": "cheque_services",
+      "intent_pred": "cheque_services",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need a new cheque book.",
+      "latency_s": 0.564
+    },
+    {
+      "id": 54,
+      "lang": "gujarati",
+      "intent_expected": "account_opening",
+      "intent_pred": "account_opening",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "account_type": "savings"
+      },
+      "entities_pred": {
+        "account_type": "savings"
+      },
+      "ent_tp": 1,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want to open a new savings account.",
+      "latency_s": 0.51
+    },
+    {
+      "id": 55,
+      "lang": "gujarati",
+      "intent_expected": "balance_enquiry",
+      "intent_pred": "balance_enquiry",
+      "intent_ok": true,
+      "counter_expected": "inquiry_desk",
+      "counter_pred": "inquiry_desk",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "How much money is in my account?",
+      "latency_s": 0.433
+    },
+    {
+      "id": 56,
+      "lang": "gujarati",
+      "intent_expected": "loan_enquiry",
+      "intent_pred": "loan_enquiry",
+      "intent_ok": true,
+      "counter_expected": "specialized_counter",
+      "counter_pred": "specialized_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "loan_type": "home"
+      },
+      "entities_pred": {
+        "loan_type": "home"
+      },
+      "ent_tp": 1,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need a loan for a house.",
+      "latency_s": 1.012
+    },
+    {
+      "id": 57,
+      "lang": "gujarati",
+      "intent_expected": "cheque_services",
+      "intent_pred": "cheque_services",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need a new cheque book.",
+      "latency_s": 30.937
+    },
+    {
+      "id": 58,
+      "lang": "odia",
+      "intent_expected": "account_opening",
+      "intent_pred": "account_opening",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "account_type": "savings"
+      },
+      "entities_pred": {
+        "account_type": "savings"
+      },
+      "ent_tp": 1,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want to open a new savings account.",
+      "latency_s": 0.406
+    },
+    {
+      "id": 59,
+      "lang": "odia",
+      "intent_expected": "balance_enquiry",
+      "intent_pred": "balance_enquiry",
+      "intent_ok": true,
+      "counter_expected": "inquiry_desk",
+      "counter_pred": "inquiry_desk",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "How much money is in my account?",
+      "latency_s": 0.389
+    },
+    {
+      "id": 60,
+      "lang": "odia",
+      "intent_expected": "loan_enquiry",
+      "intent_pred": "loan_enquiry",
+      "intent_ok": true,
+      "counter_expected": "specialized_counter",
+      "counter_pred": "specialized_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "loan_type": "home"
+      },
+      "entities_pred": {
+        "loan_type": "home"
+      },
+      "ent_tp": 1,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need a loan for a house.",
+      "latency_s": 30.95
+    },
+    {
+      "id": 61,
+      "lang": "marathi",
+      "intent_expected": "fd_rd_enquiry",
+      "intent_pred": "fd_rd_enquiry",
+      "intent_ok": true,
+      "counter_expected": "investment_counter",
+      "counter_pred": "investment_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "amount": "100000",
+        "tenure_months": "24"
+      },
+      "entities_pred": {
+        "amount": "100000",
+        "tenure_months": "24",
+        "account_type": "fd"
+      },
+      "ent_tp": 2,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want to open a Fixed Deposit of one lakh rupees for two years.",
+      "latency_s": 0.518
+    },
+    {
+      "id": 62,
+      "lang": "marathi",
+      "intent_expected": "cash_transaction",
+      "intent_pred": "cash_transaction",
+      "intent_ok": true,
+      "counter_expected": "cash_counter",
+      "counter_pred": "cash_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "amount": "10000"
+      },
+      "entities_pred": {
+        "amount": "10000"
+      },
+      "ent_tp": 1,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want to withdraw ten thousand rupees from my account.",
+      "latency_s": 0.599
+    },
+    {
+      "id": 63,
+      "lang": "marathi",
+      "intent_expected": "complaint",
+      "intent_pred": "complaint",
+      "intent_ok": true,
+      "counter_expected": "operational_supervisor",
+      "counter_pred": "operational_supervisor",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "Money was deducted from my account, but the cash did not come out of the ATM. I want to file a complaint.",
+      "latency_s": 0.506
+    },
+    {
+      "id": 64,
+      "lang": "marathi",
+      "intent_expected": "kisan_credit_card",
+      "intent_pred": "kisan_credit_card",
+      "intent_ok": true,
+      "counter_expected": "specialized_counter",
+      "counter_pred": "specialized_counter",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {
+        "loan_type": "Kisan Credit Card"
+      },
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want to apply for a Kisan Credit Card.",
+      "latency_s": 0.517
+    },
+    {
+      "id": 65,
+      "lang": "marathi",
+      "intent_expected": "nomination_update",
+      "intent_pred": "nomination_update",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "nominee_relation": "son"
+      },
+      "entities_pred": {
+        "nominee_relation": "son"
+      },
+      "ent_tp": 1,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want to add my son as a nominee.",
+      "latency_s": 0.382
+    },
+    {
+      "id": 66,
+      "lang": "marathi",
+      "intent_expected": "debit_card_services",
+      "intent_pred": "debit_card_services",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "My debit card is lost, please block it.",
+      "latency_s": 0.465
+    },
+    {
+      "id": 67,
+      "lang": "marathi",
+      "intent_expected": "other",
+      "intent_pred": "other",
+      "intent_ok": true,
+      "counter_expected": "inquiry_desk",
+      "counter_pred": "inquiry_desk",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "At what time does the bank close?",
+      "latency_s": 0.367
+    },
+    {
+      "id": 68,
+      "lang": "bengali",
+      "intent_expected": "fund_transfer",
+      "intent_pred": "fund_transfer",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "amount": "10000"
+      },
+      "entities_pred": {
+        "amount": "10000",
+        "beneficiary_relation": "mother"
+      },
+      "ent_tp": 1,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want to send ten thousand rupees to my mother's account.",
+      "latency_s": 0.425
+    },
+    {
+      "id": 69,
+      "lang": "bengali",
+      "intent_expected": "cash_transaction",
+      "intent_pred": "cash_transaction",
+      "intent_ok": true,
+      "counter_expected": "cash_counter",
+      "counter_pred": "cash_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "amount": "5000"
+      },
+      "entities_pred": {
+        "amount": "5000"
+      },
+      "ent_tp": 1,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want to deposit five thousand rupees into my account.",
+      "latency_s": 0.492
+    },
+    {
+      "id": 70,
+      "lang": "bengali",
+      "intent_expected": "mudra_loan",
+      "intent_pred": "mudra_loan",
+      "intent_ok": true,
+      "counter_expected": "specialized_counter",
+      "counter_pred": "specialized_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "amount": "200000"
+      },
+      "entities_pred": {
+        "amount": "200000",
+        "loan_type": "mudra"
+      },
+      "ent_tp": 1,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want a Mudra loan of two lakh rupees for my shop.",
+      "latency_s": 0.673
+    },
+    {
+      "id": 71,
+      "lang": "bengali",
+      "intent_expected": "account_closure",
+      "intent_pred": "account_closure",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "account_type": "savings"
+      },
+      "entities_pred": {
+        "account_type": "savings"
+      },
+      "ent_tp": 1,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want to close my savings account.",
+      "latency_s": 0.39
+    },
+    {
+      "id": 72,
+      "lang": "bengali",
+      "intent_expected": "tax_certificate_request",
+      "intent_pred": "tax_certificate_request",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {
+        "account_type": "fd"
+      },
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need a TDS certificate for my FD.",
+      "latency_s": 0.471
+    },
+    {
+      "id": 73,
+      "lang": "bengali",
+      "intent_expected": "fd_rd_enquiry",
+      "intent_pred": "fd_rd_enquiry",
+      "intent_ok": true,
+      "counter_expected": "investment_counter",
+      "counter_pred": "investment_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "amount": "50000",
+        "tenure_months": "12"
+      },
+      "entities_pred": {
+        "amount": "50000",
+        "tenure_months": "12",
+        "account_type": "fd"
+      },
+      "ent_tp": 2,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want to open a Fixed Deposit of fifty thousand rupees for one year.",
+      "latency_s": 0.501
+    },
+    {
+      "id": 74,
+      "lang": "bengali",
+      "intent_expected": "other",
+      "intent_pred": "other",
+      "intent_ok": true,
+      "counter_expected": "inquiry_desk",
+      "counter_pred": "inquiry_desk",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": true,
+      "english_pred": "I need money.",
+      "latency_s": 0.433
+    },
+    {
+      "id": 75,
+      "lang": "tamil",
+      "intent_expected": "fd_rd_enquiry",
+      "intent_pred": "fd_rd_enquiry",
+      "intent_ok": true,
+      "counter_expected": "investment_counter",
+      "counter_pred": "investment_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "amount": "100000",
+        "tenure_months": "24"
+      },
+      "entities_pred": {
+        "amount": "100000",
+        "tenure_months": "24",
+        "account_type": "fd"
+      },
+      "ent_tp": 2,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want to open a Fixed Deposit of one lakh rupees for two years.",
+      "latency_s": 0.569
+    },
+    {
+      "id": 76,
+      "lang": "tamil",
+      "intent_expected": "cash_transaction",
+      "intent_pred": "cash_transaction",
+      "intent_ok": true,
+      "counter_expected": "cash_counter",
+      "counter_pred": "cash_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "amount": "20000"
+      },
+      "entities_pred": {
+        "amount": "20000"
+      },
+      "ent_tp": 1,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need to withdraw twenty thousand rupees from my account.",
+      "latency_s": 0.501
+    },
+    {
+      "id": 77,
+      "lang": "tamil",
+      "intent_expected": "complaint",
+      "intent_pred": "complaint",
+      "intent_ok": true,
+      "counter_expected": "operational_supervisor",
+      "counter_pred": "operational_supervisor",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "Money was wrongly deducted from my account, I need to file a complaint.",
+      "latency_s": 0.494
+    },
+    {
+      "id": 78,
+      "lang": "tamil",
+      "intent_expected": "kisan_credit_card",
+      "intent_pred": "kisan_credit_card",
+      "intent_ok": true,
+      "counter_expected": "specialized_counter",
+      "counter_pred": "specialized_counter",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {
+        "loan_type": "kisan_credit_card"
+      },
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need a Kisan Credit Card.",
+      "latency_s": 0.522
+    },
+    {
+      "id": 79,
+      "lang": "tamil",
+      "intent_expected": "debit_card_services",
+      "intent_pred": "debit_card_services",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need to change my debit card PIN.",
+      "latency_s": 0.373
+    },
+    {
+      "id": 80,
+      "lang": "tamil",
+      "intent_expected": "nomination_update",
+      "intent_pred": "nomination_update",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "nominee_relation": "wife"
+      },
+      "entities_pred": {
+        "nominee_relation": "wife"
+      },
+      "ent_tp": 1,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need to add my wife as the nominee.",
+      "latency_s": 0.423
+    },
+    {
+      "id": 81,
+      "lang": "tamil",
+      "intent_expected": "other",
+      "intent_pred": "other",
+      "intent_ok": true,
+      "counter_expected": "inquiry_desk",
+      "counter_pred": "inquiry_desk",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "When does the bank open?",
+      "latency_s": 0.494
+    },
+    {
+      "id": 82,
+      "lang": "telugu",
+      "intent_expected": "fund_transfer",
+      "intent_pred": "fund_transfer",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "amount": "20000"
+      },
+      "entities_pred": {
+        "amount": "20000",
+        "beneficiary_relation": "younger brother"
+      },
+      "ent_tp": 1,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need to send twenty thousand rupees to my younger brother's account.",
+      "latency_s": 0.524
+    },
+    {
+      "id": 83,
+      "lang": "telugu",
+      "intent_expected": "cash_transaction",
+      "intent_pred": "cash_transaction",
+      "intent_ok": true,
+      "counter_expected": "cash_counter",
+      "counter_pred": "cash_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "amount": "10000"
+      },
+      "entities_pred": {
+        "amount": "10000"
+      },
+      "ent_tp": 1,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need to deposit ten thousand rupees into my account.",
+      "latency_s": 0.431
+    },
+    {
+      "id": 84,
+      "lang": "telugu",
+      "intent_expected": "mudra_loan",
+      "intent_pred": "mudra_loan",
+      "intent_ok": true,
+      "counter_expected": "specialized_counter",
+      "counter_pred": "specialized_counter",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {
+        "loan_type": "mudra"
+      },
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need a Mudra loan for my business.",
+      "latency_s": 0.732
+    },
+    {
+      "id": 85,
+      "lang": "telugu",
+      "intent_expected": "tax_certificate_request",
+      "intent_pred": "tax_certificate_request",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need the TDS certificate for the previous financial year.",
+      "latency_s": 0.476
+    },
+    {
+      "id": 86,
+      "lang": "telugu",
+      "intent_expected": "account_closure",
+      "intent_pred": "account_closure",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "account_type": "current"
+      },
+      "entities_pred": {
+        "account_type": "current"
+      },
+      "ent_tp": 1,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want to close my current account.",
+      "latency_s": 0.468
+    },
+    {
+      "id": 87,
+      "lang": "telugu",
+      "intent_expected": "complaint",
+      "intent_pred": "complaint",
+      "intent_ok": true,
+      "counter_expected": "operational_supervisor",
+      "counter_pred": "service_counter",
+      "counter_ok": false,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "My cheque did not clear, I want to file a complaint.",
+      "latency_s": 0.47
+    },
+    {
+      "id": 88,
+      "lang": "telugu",
+      "intent_expected": "other",
+      "intent_pred": "other",
+      "intent_ok": true,
+      "counter_expected": "inquiry_desk",
+      "counter_pred": "cash_counter",
+      "counter_ok": false,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": true,
+      "english_pred": "I need money.",
+      "latency_s": 0.444
+    },
+    {
+      "id": 89,
+      "lang": "kannada",
+      "intent_expected": "fd_rd_enquiry",
+      "intent_pred": "fd_rd_enquiry",
+      "intent_ok": true,
+      "counter_expected": "investment_counter",
+      "counter_pred": "investment_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "amount": "200000",
+        "tenure_months": "36"
+      },
+      "entities_pred": {
+        "amount": "200000",
+        "tenure_months": "36",
+        "account_type": "fd"
+      },
+      "ent_tp": 2,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want to deposit two lakh rupees for three years.",
+      "latency_s": 0.572
+    },
+    {
+      "id": 90,
+      "lang": "kannada",
+      "intent_expected": "cash_transaction",
+      "intent_pred": "cash_transaction",
+      "intent_ok": true,
+      "counter_expected": "cash_counter",
+      "counter_pred": "cash_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "amount": "5000"
+      },
+      "entities_pred": {
+        "amount": "5000"
+      },
+      "ent_tp": 1,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need to withdraw five thousand rupees from my account.",
+      "latency_s": 0.462
+    },
+    {
+      "id": 91,
+      "lang": "kannada",
+      "intent_expected": "kyc_update",
+      "intent_pred": "kyc_update",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need to update my KYC.",
+      "latency_s": 0.444
+    },
+    {
+      "id": 92,
+      "lang": "kannada",
+      "intent_expected": "kisan_credit_card",
+      "intent_pred": "kisan_credit_card",
+      "intent_ok": true,
+      "counter_expected": "specialized_counter",
+      "counter_pred": "specialized_counter",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {
+        "loan_type": "kisan_credit_card"
+      },
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need a Kisan Credit Card.",
+      "latency_s": 0.496
+    },
+    {
+      "id": 93,
+      "lang": "kannada",
+      "intent_expected": "debit_card_services",
+      "intent_pred": "debit_card_services",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "My debit card is lost, please block it.",
+      "latency_s": 0.514
+    },
+    {
+      "id": 94,
+      "lang": "kannada",
+      "intent_expected": "fund_transfer",
+      "intent_pred": "fund_transfer",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "amount": "15000"
+      },
+      "entities_pred": {
+        "amount": "15000",
+        "nominee_relation": "son"
+      },
+      "ent_tp": 1,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need to send fifteen thousand rupees to my son's account.",
+      "latency_s": 0.59
+    },
+    {
+      "id": 95,
+      "lang": "kannada",
+      "intent_expected": "nomination_update",
+      "intent_pred": "nomination_update",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "nominee_relation": "daughter"
+      },
+      "entities_pred": {
+        "nominee_relation": "daughter"
+      },
+      "ent_tp": 1,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need to add my daughter as a nominee.",
+      "latency_s": 0.489
+    },
+    {
+      "id": 96,
+      "lang": "kannada",
+      "intent_expected": "other",
+      "intent_pred": "other",
+      "intent_ok": true,
+      "counter_expected": "inquiry_desk",
+      "counter_pred": "inquiry_desk",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "Where is the parking?",
+      "latency_s": 0.438
+    },
+    {
+      "id": 97,
+      "lang": "gujarati",
+      "intent_expected": "fd_rd_enquiry",
+      "intent_pred": "fd_rd_enquiry",
+      "intent_ok": true,
+      "counter_expected": "investment_counter",
+      "counter_pred": "investment_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "amount": "50000",
+        "tenure_months": "12"
+      },
+      "entities_pred": {
+        "amount": "50000",
+        "tenure_months": "12",
+        "account_type": "fd"
+      },
+      "ent_tp": 2,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want to open a Fixed Deposit of 50,000 rupees for one year.",
+      "latency_s": 0.528
+    },
+    {
+      "id": 98,
+      "lang": "gujarati",
+      "intent_expected": "cash_transaction",
+      "intent_pred": "cash_transaction",
+      "intent_ok": true,
+      "counter_expected": "cash_counter",
+      "counter_pred": "cash_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "amount": "20000"
+      },
+      "entities_pred": {
+        "amount": "20000"
+      },
+      "ent_tp": 1,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want to deposit twenty thousand rupees into my account.",
+      "latency_s": 0.423
+    },
+    {
+      "id": 99,
+      "lang": "gujarati",
+      "intent_expected": "mudra_loan",
+      "intent_pred": "mudra_loan",
+      "intent_ok": true,
+      "counter_expected": "specialized_counter",
+      "counter_pred": "specialized_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "amount": "300000"
+      },
+      "entities_pred": {
+        "amount": "300000",
+        "loan_type": "mudra"
+      },
+      "ent_tp": 1,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need a Mudra loan of three lakhs for my shop.",
+      "latency_s": 0.579
+    },
+    {
+      "id": 100,
+      "lang": "gujarati",
+      "intent_expected": "complaint",
+      "intent_pred": "complaint",
+      "intent_ok": true,
+      "counter_expected": "operational_supervisor",
+      "counter_pred": "operational_supervisor",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "Money has been deducted incorrectly from my account, I want to file a complaint.",
+      "latency_s": 0.497
+    },
+    {
+      "id": 101,
+      "lang": "gujarati",
+      "intent_expected": "tax_certificate_request",
+      "intent_pred": "tax_certificate_request",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need a TDS certificate.",
+      "latency_s": 0.415
+    },
+    {
+      "id": 102,
+      "lang": "gujarati",
+      "intent_expected": "account_closure",
+      "intent_pred": "account_closure",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want to close my account.",
+      "latency_s": 0.476
+    },
+    {
+      "id": 103,
+      "lang": "gujarati",
+      "intent_expected": "kyc_update",
+      "intent_pred": "kyc_update",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "My address has changed, I need to update my KYC.",
+      "latency_s": 0.479
+    },
+    {
+      "id": 104,
+      "lang": "gujarati",
+      "intent_expected": "other",
+      "intent_pred": "other",
+      "intent_ok": true,
+      "counter_expected": "inquiry_desk",
+      "counter_pred": "inquiry_desk",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": true,
+      "english_pred": "I need money.",
+      "latency_s": 0.516
+    },
+    {
+      "id": 105,
+      "lang": "odia",
+      "intent_expected": "kyc_update",
+      "intent_pred": "kyc_update",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need to update my KYC.",
+      "latency_s": 0.469
+    },
+    {
+      "id": 106,
+      "lang": "odia",
+      "intent_expected": "cheque_services",
+      "intent_pred": "cheque_services",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need a new cheque book.",
+      "latency_s": 0.666
+    },
+    {
+      "id": 107,
+      "lang": "odia",
+      "intent_expected": "cash_transaction",
+      "intent_pred": "cash_transaction",
+      "intent_ok": true,
+      "counter_expected": "cash_counter",
+      "counter_pred": "cash_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "amount": "10000"
+      },
+      "entities_pred": {
+        "amount": "10000"
+      },
+      "ent_tp": 1,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need to withdraw ten thousand rupees from my account.",
+      "latency_s": 0.42
+    },
+    {
+      "id": 108,
+      "lang": "odia",
+      "intent_expected": "fd_rd_enquiry",
+      "intent_pred": "fd_rd_enquiry",
+      "intent_ok": true,
+      "counter_expected": "investment_counter",
+      "counter_pred": "investment_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "amount": "100000",
+        "tenure_months": "12"
+      },
+      "entities_pred": {
+        "amount": "100000",
+        "tenure_months": "12",
+        "account_type": "fd"
+      },
+      "ent_tp": 2,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want to open a Fixed Deposit of one lakh rupees for one year.",
+      "latency_s": 31.151
+    },
+    {
+      "id": 109,
+      "error": "Error code: 429 - {'error': {'message': \"Request too large for model `qwen/qwen3.8-27b` in organization `org_01ke7sd3gkepns9vgvs3qa92nc` service tier `on_demand` on output tokens per minute (OTPM): Limit 1000, Requested 1304. The request's expected output tokens exceed the enforced limit; reduce max_tokens (or the request's expected output) and try again. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\", 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+    },
+    {
+      "id": 110,
+      "lang": "odia",
+      "intent_expected": "complaint",
+      "intent_pred": "complaint",
+      "intent_ok": true,
+      "counter_expected": "operational_supervisor",
+      "counter_pred": "service_counter",
+      "counter_ok": false,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "My ATM card is not working, I want to file a complaint.",
+      "latency_s": 0.388
+    },
+    {
+      "id": 111,
+      "lang": "odia",
+      "intent_expected": "account_closure",
+      "intent_pred": "account_closure",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want to close my account.",
+      "latency_s": 0.448
+    },
+    {
+      "id": 112,
+      "error": "Error code: 429 - {'error': {'message': \"Request too large for model `qwen/qwen3.8-27b` in organization `org_01ke7sd3gkepns9vgvs3qa92nc` service tier `on_demand` on output tokens per minute (OTPM): Limit 1000, Requested 1018. The request's expected output tokens exceed the enforced limit; reduce max_tokens (or the request's expected output) and try again. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\", 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+    },
+    {
+      "id": 113,
+      "lang": "odia",
+      "intent_expected": "other",
+      "intent_pred": "other",
+      "intent_ok": true,
+      "counter_expected": "inquiry_desk",
+      "counter_pred": "inquiry_desk",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "Where is the toilet?",
+      "latency_s": 0.383
+    },
+    {
+      "id": 114,
+      "lang": "hindi",
+      "intent_expected": "loan_enquiry",
+      "intent_pred": "loan_enquiry",
+      "intent_ok": true,
+      "counter_expected": "specialized_counter",
+      "counter_pred": "specialized_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "loan_type": "personal",
+        "amount": "200000",
+        "tenure_months": "36"
+      },
+      "entities_pred": {
+        "amount": "200000",
+        "tenure_months": "36",
+        "loan_type": "personal"
+      },
+      "ent_tp": 3,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need a personal loan of 2 lakh for 3 years.",
+      "latency_s": 0.546
+    },
+    {
+      "id": 115,
+      "lang": "hindi",
+      "intent_expected": "debit_card_services",
+      "intent_pred": "debit_card_services",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "Please block my ATM card, I have lost it.",
+      "latency_s": 0.478
+    },
+    {
+      "id": 116,
+      "lang": "hindi",
+      "intent_expected": "balance_enquiry",
+      "intent_pred": "balance_enquiry",
+      "intent_ok": true,
+      "counter_expected": "inquiry_desk",
+      "counter_pred": "inquiry_desk",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "Please check how much balance is in the account.",
+      "latency_s": 30.886
+    },
+    {
+      "id": 117,
+      "lang": "hindi",
+      "intent_expected": "cash_transaction",
+      "intent_pred": "cash_transaction",
+      "intent_ok": true,
+      "counter_expected": "cash_counter",
+      "counter_pred": "cash_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "amount": "50000"
+      },
+      "entities_pred": {
+        "amount": "50000"
+      },
+      "ent_tp": 1,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want to withdraw 50,000 cash.",
+      "latency_s": 0.525
+    },
+    {
+      "id": 118,
+      "lang": "hindi",
+      "intent_expected": "fd_rd_enquiry",
+      "intent_pred": "fd_rd_enquiry",
+      "intent_ok": true,
+      "counter_expected": "investment_counter",
+      "counter_pred": "investment_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "amount": "100000",
+        "tenure_months": "60"
+      },
+      "entities_pred": {
+        "amount": "100000",
+        "tenure_months": "60",
+        "account_type": "fd"
+      },
+      "ent_tp": 2,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want to open a Fixed Deposit of 1 lakh for 5 years.",
+      "latency_s": 0.516
+    },
+    {
+      "id": 119,
+      "lang": "hindi",
+      "intent_expected": "fund_transfer",
+      "intent_pred": "fund_transfer",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "amount": "10000"
+      },
+      "entities_pred": {
+        "amount": "10000",
+        "transfer_mode": "NEFT",
+        "beneficiary_relation": "brother"
+      },
+      "ent_tp": 1,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want to do a NEFT transfer of 10,000 to my brother's account.",
+      "latency_s": 0.549
+    },
+    {
+      "id": 120,
+      "lang": "hindi",
+      "intent_expected": "kyc_update",
+      "intent_pred": "kyc_update",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {
+        "address": "new address"
+      },
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need to update my KYC, I have a new address.",
+      "latency_s": 0.462
+    },
+    {
+      "id": 121,
+      "lang": "hindi",
+      "intent_expected": "nomination_update",
+      "intent_pred": "nomination_update",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "nominee_relation": "wife"
+      },
+      "entities_pred": {
+        "nominee_relation": "wife"
+      },
+      "ent_tp": 1,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want to make my wife the nominee.",
+      "latency_s": 0.452
+    },
+    {
+      "id": 122,
+      "lang": "hindi",
+      "intent_expected": "cheque_services",
+      "intent_pred": "cheque_services",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "My cheque book is finished, I need a new one.",
+      "latency_s": 0.632
+    },
+    {
+      "id": 123,
+      "lang": "hindi",
+      "intent_expected": "complaint",
+      "intent_pred": "complaint",
+      "intent_ok": true,
+      "counter_expected": "operational_supervisor",
+      "counter_pred": "operational_supervisor",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "Wrong amount was deducted from my account, I want to file a complaint.",
+      "latency_s": 0.462
+    },
+    {
+      "id": 124,
+      "lang": "hindi",
+      "intent_expected": "other",
+      "intent_pred": "other",
+      "intent_ok": true,
+      "counter_expected": "inquiry_desk",
+      "counter_pred": "inquiry_desk",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": true,
+      "english_pred": "I needed some money.",
+      "latency_s": 0.424
+    },
+    {
+      "id": 125,
+      "lang": "hindi",
+      "intent_expected": "mudra_loan",
+      "intent_pred": "mudra_loan",
+      "intent_ok": true,
+      "counter_expected": "specialized_counter",
+      "counter_pred": "specialized_counter",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {
+        "loan_type": "mudra"
+      },
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "What documents are required for a Mudra loan?",
+      "latency_s": 0.474
+    },
+    {
+      "id": 126,
+      "lang": "english",
+      "intent_expected": "cash_transaction",
+      "intent_pred": "cash_transaction",
+      "intent_ok": true,
+      "counter_expected": "cash_counter",
+      "counter_pred": "cash_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "amount": "20000"
+      },
+      "entities_pred": {
+        "amount": "20000"
+      },
+      "ent_tp": 1,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want to deposit 20000 rupees in cash",
+      "latency_s": 0.467
+    },
+    {
+      "id": 127,
+      "lang": "english",
+      "intent_expected": "cash_transaction",
+      "intent_pred": "cash_transaction",
+      "intent_ok": true,
+      "counter_expected": "cash_counter",
+      "counter_pred": "cash_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "amount": "5000",
+        "account_type": "savings"
+      },
+      "entities_pred": {
+        "amount": "5000",
+        "account_type": "savings"
+      },
+      "ent_tp": 2,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "Can I withdraw 5000 from my savings account?",
+      "latency_s": 0.397
+    },
+    {
+      "id": 128,
+      "lang": "english",
+      "intent_expected": "other",
+      "intent_pred": "other",
+      "intent_ok": true,
+      "counter_expected": "inquiry_desk",
+      "counter_pred": "inquiry_desk",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": true,
+      "english_pred": "I need some money",
+      "latency_s": 0.427
+    },
+    {
+      "id": 129,
+      "lang": "english",
+      "intent_expected": "other",
+      "intent_pred": "other",
+      "intent_ok": true,
+      "counter_expected": "inquiry_desk",
+      "counter_pred": "cash_counter",
+      "counter_ok": false,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": true,
+      "english_pred": "Give me money",
+      "latency_s": 0.455
+    },
+    {
+      "id": 130,
+      "lang": "english",
+      "intent_expected": "other",
+      "intent_pred": "other",
+      "intent_ok": true,
+      "counter_expected": "inquiry_desk",
+      "counter_pred": "inquiry_desk",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "What time does the branch close today?",
+      "latency_s": 0.442
+    },
+    {
+      "id": 131,
+      "lang": "english",
+      "intent_expected": "other",
+      "intent_pred": "other",
+      "intent_ok": true,
+      "counter_expected": "inquiry_desk",
+      "counter_pred": "inquiry_desk",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "Is there a parking space nearby?",
+      "latency_s": 0.346
+    },
+    {
+      "id": 132,
+      "lang": "english",
+      "intent_expected": "other",
+      "intent_pred": "other",
+      "intent_ok": true,
+      "counter_expected": "inquiry_desk",
+      "counter_pred": "inquiry_desk",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "Can I get a glass of water?",
+      "latency_s": 0.365
+    },
+    {
+      "id": 133,
+      "lang": "english",
+      "intent_expected": "fd_rd_enquiry",
+      "intent_pred": "account_opening",
+      "intent_ok": false,
+      "counter_expected": "investment_counter",
+      "counter_pred": "investment_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "amount": "2000",
+        "tenure_months": "24"
+      },
+      "entities_pred": {
+        "account_type": "rd",
+        "amount": "2000",
+        "tenure_months": "24"
+      },
+      "ent_tp": 2,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want to start a recurring deposit of 2000 rupees a month for 2 years",
+      "latency_s": 0.503
+    },
+    {
+      "id": 134,
+      "lang": "english",
+      "intent_expected": "fund_transfer",
+      "intent_pred": "fund_transfer",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "amount": "100000",
+        "transfer_mode": "RTGS"
+      },
+      "entities_pred": {
+        "amount": "100000",
+        "transfer_mode": "RTGS",
+        "nominee_relation": "daughter"
+      },
+      "ent_tp": 2,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want to transfer 1 lakh to my daughter's account through RTGS",
+      "latency_s": 0.518
+    },
+    {
+      "id": 135,
+      "lang": "english",
+      "intent_expected": "tax_certificate_request",
+      "intent_pred": "tax_certificate_request",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {
+        "account_type": "fd"
+      },
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need Form 16A for the interest on my fixed deposit",
+      "latency_s": 0.535
+    },
+    {
+      "id": 136,
+      "lang": "english",
+      "intent_expected": "account_closure",
+      "intent_pred": "account_closure",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "account_type": "savings"
+      },
+      "entities_pred": {
+        "account_type": "savings"
+      },
+      "ent_tp": 1,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want to close my savings account because I am moving to another city.",
+      "latency_s": 0.432
+    },
+    {
+      "id": 137,
+      "lang": "english",
+      "intent_expected": "loan_enquiry",
+      "intent_pred": "loan_enquiry",
+      "intent_ok": true,
+      "counter_expected": "specialized_counter",
+      "counter_pred": "specialized_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "loan_type": "home",
+        "monthly_income": "60000"
+      },
+      "entities_pred": {
+        "monthly_income": "60000",
+        "loan_type": "home"
+      },
+      "ent_tp": 2,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "My salary is 60000 a month, how much home loan can I get?",
+      "latency_s": 0.468
+    },
+    {
+      "id": 138,
+      "lang": "hindi",
+      "intent_expected": "cash_transaction",
+      "intent_pred": "cash_transaction",
+      "intent_ok": true,
+      "counter_expected": "cash_counter",
+      "counter_pred": "cash_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "amount": "10000"
+      },
+      "entities_pred": {
+        "amount": "10000"
+      },
+      "ent_tp": 1,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need to deposit ten thousand rupees into my account.",
+      "latency_s": 0.498
+    },
+    {
+      "id": 139,
+      "lang": "hindi",
+      "intent_expected": "cash_transaction",
+      "intent_pred": "cash_transaction",
+      "intent_ok": true,
+      "counter_expected": "cash_counter",
+      "counter_pred": "cash_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "amount": "5000"
+      },
+      "entities_pred": {
+        "amount": "5000"
+      },
+      "ent_tp": 1,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need to withdraw five thousand rupees.",
+      "latency_s": 0.394
+    },
+    {
+      "id": 140,
+      "lang": "hindi",
+      "intent_expected": "other",
+      "intent_pred": "other",
+      "intent_ok": true,
+      "counter_expected": "inquiry_desk",
+      "counter_pred": "inquiry_desk",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": true,
+      "english_pred": "I need money.",
+      "latency_s": 0.436
+    },
+    {
+      "id": 141,
+      "lang": "hindi",
+      "intent_expected": "other",
+      "intent_pred": "other",
+      "intent_ok": true,
+      "counter_expected": "inquiry_desk",
+      "counter_pred": "inquiry_desk",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "Where does the manager sit?",
+      "latency_s": 0.427
+    },
+    {
+      "id": 142,
+      "lang": "hindi",
+      "intent_expected": "fd_rd_enquiry",
+      "intent_pred": "account_opening",
+      "intent_ok": false,
+      "counter_expected": "investment_counter",
+      "counter_pred": "investment_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "amount": "2000",
+        "tenure_months": "24"
+      },
+      "entities_pred": {
+        "account_type": "rd",
+        "amount": "2000",
+        "tenure_months": "24"
+      },
+      "ent_tp": 2,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want to open a Recurring Deposit of two thousand rupees per month for a period of two years.",
+      "latency_s": 0.576
+    },
+    {
+      "id": 143,
+      "lang": "hindi",
+      "intent_expected": "tax_certificate_request",
+      "intent_pred": "tax_certificate_request",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need the TDS certificate for last year.",
+      "latency_s": 0.498
+    },
+    {
+      "id": 144,
+      "lang": "hindi",
+      "intent_expected": "nomination_update",
+      "intent_pred": "nomination_update",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "nominee_relation": "daughter"
+      },
+      "entities_pred": {
+        "nominee_relation": "daughter"
+      },
+      "ent_tp": 1,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want to make my daughter the nominee.",
+      "latency_s": 0.458
+    },
+    {
+      "id": 145,
+      "lang": "hindi",
+      "intent_expected": "complaint",
+      "intent_pred": "complaint",
+      "intent_ok": true,
+      "counter_expected": "operational_supervisor",
+      "counter_pred": "operational_supervisor",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "Money was deducted from my account in the wrong way. I want to file a complaint.",
+      "latency_s": 0.455
+    },
+    {
+      "id": 146,
+      "lang": "hindi",
+      "intent_expected": "account_closure",
+      "intent_pred": "account_closure",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "account_type": "current"
+      },
+      "entities_pred": {
+        "account_type": "current"
+      },
+      "ent_tp": 1,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want to close my current account.",
+      "latency_s": 0.46
+    },
+    {
+      "id": 147,
+      "lang": "hindi",
+      "intent_expected": "kisan_credit_card",
+      "intent_pred": "kisan_credit_card",
+      "intent_ok": true,
+      "counter_expected": "specialized_counter",
+      "counter_pred": "specialized_counter",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {
+        "loan_type": "kisan_credit_card"
+      },
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I want to increase the limit of my Kisan Credit Card.",
+      "latency_s": 0.493
+    },
+    {
+      "id": 148,
+      "lang": "hindi",
+      "intent_expected": "debit_card_services",
+      "intent_pred": "debit_card_services",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {},
+      "entities_pred": {},
+      "ent_tp": 0,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need to change my debit card PIN.",
+      "latency_s": 0.442
+    },
+    {
+      "id": 149,
+      "lang": "hindi",
+      "intent_expected": "fund_transfer",
+      "intent_pred": "fund_transfer",
+      "intent_ok": true,
+      "counter_expected": "service_counter",
+      "counter_pred": "service_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "amount": "200000",
+        "transfer_mode": "RTGS"
+      },
+      "entities_pred": {
+        "amount": "200000",
+        "transfer_mode": "RTGS",
+        "nominee_relation": "son"
+      },
+      "ent_tp": 2,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need to send two lakhs via RTGS to my son's account.",
+      "latency_s": 0.518
+    },
+    {
+      "id": 150,
+      "lang": "hindi",
+      "intent_expected": "mudra_loan",
+      "intent_pred": "mudra_loan",
+      "intent_ok": true,
+      "counter_expected": "specialized_counter",
+      "counter_pred": "specialized_counter",
+      "counter_ok": true,
+      "entities_expected": {
+        "amount": "50000"
+      },
+      "entities_pred": {
+        "amount": "50000",
+        "loan_type": "mudra"
+      },
+      "ent_tp": 1,
+      "ent_fp": 0,
+      "ent_fn": 0,
+      "clarification_pred": false,
+      "english_pred": "I need a Mudra loan of fifty thousand for my shop.",
+      "latency_s": 0.521
+    }
+  ]
+}

@@ -16,17 +16,17 @@ Honest limits:
 
 - **Whisper is bypassed.** Gold text goes straight into the pipeline, so this is accuracy *given a correct transcript*.
 - **The author wrote the non-English cases.** They are flagged `needs_native_review` and have not yet been checked by native speakers.
-- **Counter accuracy is soft.** The LLM picks the counter, and some requests could reasonably go to two counters.
+- **Counter accuracy mostly mirrors intent.** The counter now comes from a routing table keyed by intent. The LLM only picks it for "other", and some requests could reasonably go to two counters.
 - **Entity scoring only covers annotated slots.** Extra predicted keys are not penalised.
 
 ```bash
-python backend/eval/run_eval.py              # ~25 min on Groq's free tier (8k tokens/min)
+python backend/eval/run_eval.py              # ~25 min; one full run uses most of a model's free daily token quota
 python backend/eval/run_eval.py --limit 10 --delay 2
-python backend/eval/run_eval.py --model qwen/qwen3.8-27b --out eval_results_qwen.json --markdown RESULTS_qwen.md
+python backend/eval/run_eval.py --model openai/gpt-oss-120b --out eval_results_gptoss.json --markdown RESULTS_gptoss.md
 python backend/eval/run_eval.py --mock       # re-score saved results offline (used in CI)
 ```
 
-Results land in `RESULTS.md` and `eval_results.json`. `baseline_llama33_60cases.json` is the original 60-case run on the retired `llama-3.3-70b-versatile`, kept for comparison. Re-score it with `--mock --out baseline_llama33_60cases.json`.
+Results land in `RESULTS.md` and `eval_results.json` (default model, Qwen). `RESULTS_gptoss.md` and `eval_results_gptoss.json` hold the gpt-oss-120b run. New runs also save each raw model output, so `--mock` re-runs the current post-processing on it and rule changes can be measured without API calls. `baseline_llama33_60cases.json` is the original 60-case run on the retired `llama-3.3-70b-versatile`, kept for comparison. Re-score it with `--mock --out baseline_llama33_60cases.json`.
 
 ## Speech-to-text (`run_stt_eval.py`)
 

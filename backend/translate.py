@@ -30,7 +30,9 @@ log = logging.getLogger("vaani")
 client = AsyncGroq(api_key=os.getenv("GROQ_API_KEY", ""))
 
 # llama-3.3-70b-versatile (the original model) was retired by Groq; keep this configurable.
-MODEL = os.getenv("LLM_MODEL", "openai/gpt-oss-120b")
+# Qwen won the 150-case benchmark on both accuracy and latency (see backend/eval/RESULTS.md);
+# openai/gpt-oss-120b is the tested alternative.
+MODEL = os.getenv("LLM_MODEL", "qwen/qwen3.8-27b")
 HISTORY_TURNS = 10   # ponytail: fixed window keeps prompt size bounded; summarise older turns if context is lost
 
 MONEY_FOLLOWUP_EN = (
@@ -197,7 +199,10 @@ async def _chat(messages: list, json_mode: bool = False, temperature: float = 0.
     if MODEL.startswith("openai/gpt-oss"):
         kwargs["reasoning_effort"] = "low"     # classification + translation don't need long reasoning
     response = await client.chat.completions.create(
-        model=MODEL, messages=messages, temperature=temperature, **kwargs
+        model=MODEL, messages=messages, temperature=temperature,
+        # Answers are ~200 tokens. An explicit cap stops runaway output and keeps requests
+        # under Groq's output-tokens-per-minute limit (Qwen's default max rejected long Odia prompts).
+        max_tokens=1500, **kwargs
     )
     return response.choices[0].message.content or ""
 
@@ -222,7 +227,8 @@ Customer said: "{text}"
 {target_fields}
 
 Possible intents: {', '.join(INTENT_CATEGORIES)}
-  (cash_transaction = withdrawing or depositing cash at the counter)
+  (cash_transaction = withdrawing or depositing cash at the counter;
+   opening or asking about an FD or RD is fd_rd_enquiry, not account_opening)
 Possible counters: {json.dumps(COUNTERS)}
 
 Tasks:
