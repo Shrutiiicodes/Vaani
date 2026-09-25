@@ -32,6 +32,15 @@ def test_alias_keys_are_canonicalised():
     assert out["entities"]["mobile"] == "9876543210"
 
 
+def test_account_type_read_from_english_translation():
+    out = postprocess(llm(english_translation="I want to open a new savings account",
+                          intent="account_opening", confidence=0.9), "x")
+    assert out["entities"]["account_type"] == "savings"
+    out = postprocess(llm(english_translation="Close my current account", intent="account_closure",
+                          confidence=0.9, entities={"account_type": "salary"}), "x")
+    assert out["entities"]["account_type"] == "salary"      # an explicit LLM value wins
+
+
 # ── Calculations wired through postprocess ────────────────────────────────────
 
 def test_emi_prefers_normalised_entities_over_raw_calc_inputs():
@@ -91,8 +100,9 @@ def test_confident_specific_money_request_is_not_second_guessed():
 
 
 def test_llm_can_flag_ambiguity_itself():
-    out = postprocess(llm(intent="loan_enquiry", confidence=0.6, needs_clarification=True), "मुझे पैसे चाहिए")
+    out = postprocess(llm(intent="cash_transaction", confidence=0.6, needs_clarification=True), "मुझे पैसे चाहिए")
     assert out["needs_clarification"] is True
+    assert out["intent"] == "other"          # a guessed intent is not recorded for an unclear request
 
 
 def test_non_money_other_intent_does_not_ask():

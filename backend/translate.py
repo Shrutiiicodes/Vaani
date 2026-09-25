@@ -146,7 +146,10 @@ def parse_llm_output(raw: str, fallback_text: str) -> dict:
         return LLMTranslationOutput(english_translation=fallback_text).model_dump()
 
 
-def normalize_entities(entities: dict) -> dict:
+_ACCOUNT_TYPE = re.compile(r"\b(savings?|current|salary)\s+(?:bank\s+)?account\b", re.I)
+
+
+def normalize_entities(entities: dict, english: str = "") -> dict:
     ent = {str(k).strip().lower().replace(" ", "_"): v for k, v in entities.items()}
 
     if not ent.get("tenure_months"):
@@ -171,6 +174,11 @@ def normalize_entities(entities: dict) -> dict:
                 if ent.get(alt):
                     ent[canon] = ent[alt]
                     break
+
+    # The LLM often skips account_type when it is only an adjective ("open a savings account");
+    # the English translation says it plainly, so read it from there.
+    if not ent.get("account_type") and (m := _ACCOUNT_TYPE.search(english or "")):
+        ent["account_type"] = "savings" if m.group(1).lower().startswith("saving") else m.group(1).lower()
 
     for key in AMOUNT_KEYS & ent.keys():
         n = clean_number(ent[key])
@@ -259,7 +267,7 @@ def postprocess(result: dict, text: str, active_form_type: str | None = None) ->
     intent = result.get("intent", "other")
     confidence = result.get("confidence", 0.5)
     english = result.get("english_translation", text)
-    entities = normalize_entities(result.get("entities") or {})
+    entities = normalize_entities(result.get("entities") or {}, english)
     result["entities"] = entities
 
     # Calculations — entities are normalised, so prefer them over the raw calc inputs.
@@ -292,6 +300,9 @@ def postprocess(result: dict, text: str, active_form_type: str | None = None) ->
     # Clarification: the LLM's own judgement, plus a keyword backstop for vague money requests.
     money = _mentions_money(text) or _mentions_money(english)
     if result.get("needs_clarification") or (money and (intent == "other" or confidence < 0.55)):
+        # An unclear request has no settled intent yet; record it as "other" so the stored turn,
+        # session history and summary match what staff see (the question, not a guessed intent).
+        result["intent"] = "other"
         result["needs_clarification"] = True
         result["follow_up_question"] = MONEY_FOLLOWUP_EN
         result["process_guide"] = []
