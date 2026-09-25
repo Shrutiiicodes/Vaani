@@ -116,6 +116,7 @@ def test_customer_turn_streams_stages_and_persists(client):
     assert analysis["form_template"]["prefill"]["loan_amount"] == "500000"
     assert audio["kind"] == "calculation" and audio["audio_base64"] == "QUJD"
     assert {"stt_ms", "llm_ms", "total_ms"} <= done.keys()
+    assert "llm_output" not in analysis           # internal eval field never reaches the client
 
     turns = client.get(f"/api/session/{sid}", headers=headers).json()["turns"]
     assert len(turns) == 1 and turns[0]["intent"] == "loan_enquiry"

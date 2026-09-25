@@ -56,6 +56,27 @@ COUNTERS = {
     "branch_manager": "Branch Manager (High Value Transactions, HNI, Final Escalations)"
 }
 
+# Counter for each intent. Routing is branch policy, so it lives in a table rather
+# than being left to the LLM (which sent complaints to the service counter).
+# "other" has no entry: the LLM's suggestion is used there.
+INTENT_COUNTERS = {
+    "account_opening": "service_counter",
+    "balance_enquiry": "inquiry_desk",
+    "cash_transaction": "cash_counter",
+    "fd_rd_enquiry": "investment_counter",
+    "loan_enquiry": "specialized_counter",
+    "mudra_loan": "specialized_counter",
+    "kisan_credit_card": "specialized_counter",
+    "kyc_update": "service_counter",
+    "complaint": "operational_supervisor",
+    "fund_transfer": "service_counter",
+    "account_closure": "service_counter",
+    "nomination_update": "service_counter",
+    "cheque_services": "service_counter",
+    "debit_card_services": "service_counter",
+    "tax_certificate_request": "service_counter",
+}
+
 PROCESS_GUIDES = {
     "account_opening": ["Ask for Aadhaar card and PAN card", "Ask for passport-size photograph", "Ask if mobile number is linked to Aadhaar", "Fill account opening form (AOF)", "Collect minimum balance (₹500 for basic savings)"],
     "balance_enquiry": ["Ask for account number or passbook", "Verify identity (ID proof or signature)", "Share balance or print passbook entries", "Suggest mobile banking / missed-call balance for next time"],

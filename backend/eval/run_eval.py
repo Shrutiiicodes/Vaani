@@ -198,6 +198,7 @@ def detail_for(case: dict, result: dict, latency: float | None) -> dict:
         "clarification_pred": result.get("needs_clarification"),   # None = not recorded (old runs)
         "english_pred": result.get("english_translation", ""),
         "latency_s": round(latency, 3) if latency is not None else None,
+        "llm_output": result.get("llm_output"),
     }
 
 
@@ -223,12 +224,26 @@ async def run_live(cases: list, args) -> list:
 
 
 def replay(cases_by_id: dict, path: str) -> tuple[list, str]:
-    """Re-score saved predictions with the current scoring code (no API calls)."""
+    """Re-score saved results with no API calls.
+
+    Where the raw model output was saved, the CURRENT post-processing is re-run on it,
+    so rule changes can be measured against frozen LLM outputs. Older results only
+    have final predictions, which are re-scored as they are.
+    """
+    import copy
+
+    from translate import postprocess
+
     with open(path, encoding="utf-8") as f:
         saved = json.load(f)
     details = []
     for d in saved["details"]:
         if "error" in d or d["id"] not in cases_by_id:
+            continue
+        if d.get("llm_output"):
+            case = cases_by_id[d["id"]]
+            result = postprocess(copy.deepcopy(d["llm_output"]), case["audio_text"])
+            details.append(detail_for(case, result, d.get("latency_s")))
             continue
         result = {"intent": d["intent_pred"], "suggested_counter": d["counter_pred"],
                   "entities": d["entities_pred"], "needs_clarification": d.get("clarification_pred"),

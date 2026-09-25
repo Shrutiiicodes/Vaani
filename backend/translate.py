@@ -1,3 +1,4 @@
+import copy
 import json
 import logging
 import math
@@ -15,6 +16,7 @@ from banking_context import (
     FD_SLABS,
     FORM_TEMPLATES,
     INTENT_CATEGORIES,
+    INTENT_COUNTERS,
     INTENT_FORMS,
     LOAN_CATEGORY_ALIASES,
     LOAN_RATES,
@@ -259,7 +261,10 @@ async def translate_customer_speech(text: str, source_lang: str, conversation_hi
         [{"role": "system", "content": BANKING_SYSTEM_PROMPT}, {"role": "user", "content": prompt}],
         json_mode=True,
     )
-    return postprocess(parse_llm_output(raw, text), text, active_form_type)
+    parsed = parse_llm_output(raw, text)
+    result = postprocess(copy.deepcopy(parsed), text, active_form_type)
+    result["llm_output"] = parsed   # validated model output before post-processing (eval replays it)
+    return result
 
 
 def postprocess(result: dict, text: str, active_form_type: str | None = None) -> dict:
@@ -302,7 +307,8 @@ def postprocess(result: dict, text: str, active_form_type: str | None = None) ->
     if result.get("needs_clarification") or (money and (intent == "other" or confidence < 0.55)):
         # An unclear request has no settled intent yet; record it as "other" so the stored turn,
         # session history and summary match what staff see (the question, not a guessed intent).
-        result["intent"] = "other"
+        result["intent"] = intent = "other"
+        result["suggested_counter"] = "inquiry_desk"
         result["needs_clarification"] = True
         result["follow_up_question"] = MONEY_FOLLOWUP_EN
         result["process_guide"] = []
@@ -311,6 +317,7 @@ def postprocess(result: dict, text: str, active_form_type: str | None = None) ->
         result["follow_up_question"] = None
         result["process_guide"] = PROCESS_GUIDES.get(intent, [])
 
+    result["suggested_counter"] = INTENT_COUNTERS.get(intent, result.get("suggested_counter") or "inquiry_desk")
     return result
 
 

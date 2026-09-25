@@ -109,6 +109,20 @@ def test_non_money_other_intent_does_not_ask():
     assert postprocess(llm(intent="other", confidence=0.9), "Where is the washroom?")["needs_clarification"] is False
 
 
+# ── Counter routing ───────────────────────────────────────────────────────────
+
+def test_counter_comes_from_intent_table_not_llm():
+    out = postprocess(llm(intent="complaint", confidence=0.9, suggested_counter="service_counter"), "x")
+    assert out["suggested_counter"] == "operational_supervisor"
+
+
+def test_llm_counter_kept_for_other_and_clarification_goes_to_inquiry():
+    assert postprocess(llm(intent="other", confidence=0.9, suggested_counter="branch_manager"),
+                       "I want to speak to the manager")["suggested_counter"] == "branch_manager"
+    assert postprocess(llm(intent="cash_transaction", confidence=0.9, suggested_counter="cash_counter",
+                           needs_clarification=True), "I need money")["suggested_counter"] == "inquiry_desk"
+
+
 # ── Parsing the raw LLM text ──────────────────────────────────────────────────
 
 def test_parse_handles_fences_and_indian_number_strings():
