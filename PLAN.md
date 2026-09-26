@@ -19,7 +19,7 @@ Current state: tests pass. Uncommitted work-in-progress: `DATABASE_URL` support 
 
 | # | File | Problem | Fix |
 |---|------|---------|-----|
-| 0.1 | `frontend/index.html` | Staff password is hardcoded as the login input's default `value="staffpswd_1"`. | Remove the `value` attribute. Rotate the password in `.env`. |
+| 0.1 | `frontend/index.html` | Staff password is hardcoded as the login input's default a real password as its `value`. | Remove the `value` attribute. Rotate the password in `.env`. |
 | 0.2 | `backend/banking_sessions.db` | Real session data is tracked in git. | `git rm --cached`, add `*.db` to `.gitignore`. |
 | 0.3 | `frontend/app.js` (`addLog`, `renderForm`, guide steps, `printForm`) | Transcript, translation and LLM entity values are injected via `innerHTML` and attribute interpolation. STT and LLM output are untrusted, so this is stored XSS. | Build nodes with `textContent`; set `input.value` in JS instead of inside the template string. Add one `escapeHtml` helper and use it in `printForm`. |
 | 0.4 | `backend/main.py` | `allow_origins=["*"]` with bearer auth. | Read `ALLOWED_ORIGINS` env (comma list), default `http://localhost:8000`. |

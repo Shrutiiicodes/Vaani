@@ -7,6 +7,10 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-005571?logo=fastapi)](https://fastapi.tiangolo.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
+![A Hindi home-loan request: transcript streams in, then intent, EMI, routing, pre-filled form and checklist; the staff reply is spoken back in Hindi](docs/demo.gif)
+
+*A real recorded turn: Groq Whisper and Qwen, no mocks. Recorded with `docs/record_demo.py`.*
+
 A customer walks up to the desk and speaks Tamil, Gujarati or Hindi. The staff member sees an English translation within a second. Vaani then shows the banking intent, the counter to send the customer to, a pre-filled form, the process checklist and any EMI or deposit calculation. The staff member types a reply in English, and the customer hears it in their own language.
 
 ## How it works
@@ -37,19 +41,18 @@ All numbers below are measured with real Groq calls. Full tables and methodology
 
 This benchmark has 150 gold-text cases across 9 languages, including 13 code-mixed Hinglish cases and 8 deliberately vague requests. It measures the pipeline given a correct transcript.
 
-| | Qwen3.8-27b (default) | gpt-oss-120b |
-|---|---:|---:|
-| Intent accuracy (16 intents) | 98.6% | 94.0% |
-| Entity extraction F1 | 1.00 | 0.95 |
-| Counter routing, as the LLM chose it | 95.9% | 88.7% |
-| Clarifying question on vague requests | 8 / 8, no false alarms | 8 / 8, no false alarms |
-| Code-mixed Hinglish intent accuracy | 100% | 92.3% |
-| LLM latency p50 / p95 | 0.48 s / 0.73 s | 1.11 s / 2.47 s |
-| Translation BLEU vs. reference | 70.8 | 72.9 |
+| | Qwen3.8-27b (default) | gpt-oss-120b | Original pipeline |
+|---|---:|---:|---:|
+| Intent accuracy (16 intents) | 100% | 99.3% | 98.3% |
+| Entity extraction F1 | 1.00 | 1.00 | 0.68 |
+| Counter routing | 100% | 99.3% | 95.0% |
+| Clarifying question on vague requests | 8 / 8, no false alarms | 8 / 8, no false alarms | not measured |
+| LLM latency p50 / p95 | 0.50 s / 0.82 s | 1.05 s / 1.90 s | 3.38 s / 4.46 s |
+| Translation BLEU vs. reference | 70.3 | 72.2 | not measured |
 
-- **Before and after.** On the original 60 cases, entity F1 went from 0.68 with the original `llama-3.3-70b-versatile` pipeline to 1.00 now. Tenures in years, "50 lakhs" style amounts and account types used to be dropped.
-- **Both runs predate the last three post-processing rules.** The rules record unclear requests as "other", read the account type from the translation, and take the counter from a routing table. Re-applied to the same gpt-oss outputs, they give 98.7% intent accuracy and 99.3% routing. Qwen's 2 misses and 2 errored Odia cases all pass with the current code. A clean full rerun is waiting on Groq's free-tier daily token quota.
-- **Honest limits.** Entity scoring covers 90 annotated slots: amounts, tenures, loan and account types, and nominee relations. The non-English cases have not yet been reviewed by native speakers.
+- **The original pipeline** is `llama-3.3-70b-versatile` on the original 60 cases. Groq has since retired that model. On those same 60 cases, both new configurations score 100% intent and 1.00 entity F1. The old pipeline dropped tenures given in years, "50 lakhs" style amounts and account types.
+- **This is not a held-out test.** The first run on this set scored 94.0% intent and 0.95 entity F1 with gpt-oss. I then added post-processing rules to fix the failures I saw: vague money requests labelled as cash withdrawals, missing account types and inconsistent routing. The scores above are after that tuning, so expect lower accuracy on new phrasings. A fresh held-out set is the next step.
+- **Other limits.** Entity scoring covers 90 annotated slots: amounts, tenures, loan and account types, and nominee relations. The non-English cases have not yet been reviewed by native speakers.
 
 ### Speech recognition
 
