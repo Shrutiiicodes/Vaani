@@ -32,11 +32,9 @@ Results land in `RESULTS.md` and `eval_results.json` (default model, Qwen). `RES
 
 Clips are listed in `audio/manifest.json`. The committed clips are **synthetic**: gold sentences voiced by Microsoft neural TTS with two voices per language. Clean studio speech flatters Whisper, so treat these numbers as an upper bound. Results are always split by `source`.
 
-To add real recordings, drop files into `audio/human/` and add entries with `"source": "human"`:
+To add real recordings, follow the checklist in [audio/human/README.md](audio/human/README.md). It gives 27 sentences with a filename for each. A clip saved as `audio/human/<language>_<case id>.<ext>` is picked up automatically, with its reference text taken from that test case.
 
-```json
-{"file": "human/hindi_01.m4a", "language": "hindi", "text": "मुझे नई चेक बुक चाहिए", "source": "human"}
-```
+Native-speaker review: fill in [native_review.csv](native_review.csv), which opens in Excel or Google Sheets. It has one row per non-English case, with columns for whether the sentence sounds natural and whether its meaning is right.
 
 ```bash
 python backend/eval/run_stt_eval.py          # auto-detect language

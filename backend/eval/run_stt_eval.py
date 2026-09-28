@@ -44,10 +44,31 @@ def normalise(text: str) -> str:
 
 
 def load_manifest() -> list:
-    if not os.path.exists(MANIFEST):
+    manifest = []
+    if os.path.exists(MANIFEST):
+        with open(MANIFEST, encoding="utf-8") as f:
+            manifest = json.load(f)
+    return manifest + discover_human_clips({m["file"] for m in manifest})
+
+
+def discover_human_clips(known: set) -> list:
+    """Recordings dropped into audio/human/ as <language>_<case id>.<ext> need no manifest entry:
+    the reference text is taken from that case in test_cases.json."""
+    folder = os.path.join(AUDIO, "human")
+    if not os.path.isdir(folder):
         return []
-    with open(MANIFEST, encoding="utf-8") as f:
-        return json.load(f)
+    with open(os.path.join(HERE, "test_cases.json"), encoding="utf-8") as f:
+        cases = {c["id"]: c for c in json.load(f)}
+    found = []
+    for name in sorted(os.listdir(folder)):
+        m = re.fullmatch(r"([a-z]+)_(\d+)\.(m4a|mp3|wav|webm|ogg|aac|flac)", name.lower())
+        rel = f"human/{name}"
+        if not m or rel in known or int(m.group(2)) not in cases:
+            continue
+        case = cases[int(m.group(2))]
+        found.append({"file": rel, "language": m.group(1), "text": case["audio_text"],
+                      "source": "human", "case_id": case["id"]})
+    return found
 
 
 async def synthesize(per_language: int):

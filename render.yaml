@@ -1,0 +1,20 @@
+# Render blueprint: https://render.com/docs/blueprint-spec
+# The Deploy button in the README reads this file. You are asked for the two
+# `sync: false` values; JWT_SECRET is generated for you.
+services:
+  - type: web
+    name: vaani
+    runtime: docker
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false
+      - key: STAFF_PASSWORD
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: STAFF_USERNAME
+        value: admin
+      - key: BANK_NAME
+        value: Demo Bank

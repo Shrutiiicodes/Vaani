@@ -147,12 +147,16 @@ ruff check backend api
 
 CI runs lint and tests, re-scores the saved eval results, and builds the Docker image and checks its health endpoint. Accuracy and latency evaluation lives in [backend/eval](backend/eval/README.md).
 
-## Deployment notes
+## Deploy
 
-- **Docker on Render, Railway or a VM** is the simplest fit: requests are long-lived streams, and SQLite on a volume is enough for a branch.
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Shrutiiicodes/Vaani)
+
+The button reads [render.yaml](render.yaml). Render asks for your `GROQ_API_KEY` and a `STAFF_PASSWORD`, generates the JWT secret, builds the Dockerfile and checks `/health`. Log in as `admin`.
+
+- **Free plan caveats.** The service sleeps after 15 minutes idle, so the first request after that takes about a minute. Its disk is wiped on every restart, so sessions do not persist. To keep them, add a `DATABASE_URL` from a free Postgres such as [Neon](https://neon.tech). The app already speaks Postgres.
 - **Vercel** (`vercel.json`) is untested end to end. Serverless needs `DATABASE_URL` pointing at Postgres, and response streaming may be buffered.
-- Token revocation and the translation cache live in process memory. With several workers, a logout is only honoured by the worker that received it.
-- Rates in `backend/banking_context.py` are illustrative demo values, not any bank's published rates.
+- **Several workers.** Token revocation and the translation cache live in process memory, so a logout is only honoured by the worker that received it.
+- **Rates are illustrative.** The rates in `backend/banking_context.py` are demo values, not any bank's published rates.
 
 ## Known limitations
 
