@@ -1,0 +1,7 @@
+-r requirements.txt
+pytest==9.0.2
+ruff==0.16.9
+jiwer==4.0.0
+sacrebleu==2.6.0
+playwright==1.63.0   # docs/record_demo.py only; drives an installed Edge or Chrome
+# Optional, heavy (pulls in PyTorch): pip install bert-score   -> run_eval.py --bertscore

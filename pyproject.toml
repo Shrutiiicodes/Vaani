@@ -1,3 +1,16 @@
 [tool.pyrefly]
 python_interpreter = "venv/Scripts/python.exe"
 search_path = ["backend"]
+
+[tool.pytest.ini_options]
+pythonpath = ["backend"]
+testpaths = ["backend/tests"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+src = ["backend"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+ignore = ["E501", "B008"]   # long prompt strings; FastAPI Depends() defaults
