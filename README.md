@@ -54,17 +54,24 @@ This benchmark has 150 gold-text cases across 9 languages, including 13 code-mix
 - **This is not a held-out test.** The first run on this set scored 94.0% intent and 0.95 entity F1 with gpt-oss. I then added post-processing rules to fix the failures I saw: vague money requests labelled as cash withdrawals, missing account types and inconsistent routing. The scores above are after that tuning, so expect lower accuracy on new phrasings. A fresh held-out set is the next step.
 - **Other limits.** Entity scoring covers 90 annotated slots: amounts, tenures, loan and account types, and nominee relations. The non-English cases have not yet been reviewed by native speakers.
 
-### Speech recognition
+### Speech recognition and end to end
 
-These are 32 clips in 8 languages, voiced by neural TTS.
+This uses three clip sets. The first is 80 real native speakers from Google's [FLEURS](https://huggingface.co/datasets/google/fleurs) dataset, reading general sentences, 10 per language. The second is 32 banking sentences from the test set in neural-TTS voices. The third is the same 32 banking clips with background chatter from real speakers at 10 dB SNR and phone-mic band limiting, to simulate a busy branch.
 
 | Whisper large-v3 | Auto-detect | With the staff's language hint |
 |---|---:|---:|
-| Language identified correctly | 20 / 32 | 32 / 32 |
-| Word error rate | 55.4% | 31.7% |
-| Character error rate | 36.9% | 11.3% |
+| Real speakers: character error rate | 22.9% | 20.9% |
+| Real speakers: language identified | 72 / 80 | 80 / 80 |
+| Banking clips, clean: character error rate | 36.9% | 11.3% |
+| Banking clips, noisy branch: character error rate | 56.5% | 18.9% |
+| Banking clips, noisy branch: language identified | 12 / 32 | 32 / 32 |
+| **Audio to correct intent**, banking clips, clean | | **97%** (31 / 32) |
+| **Audio to correct intent**, banking clips, noisy branch | | **72%** (23 / 32) |
 
-Auto-detect hears Gujarati, Marathi and Bengali as Hindi and writes them in the wrong script. The reply would then be spoken in the wrong language, which is why the dashboard has a language picker. Hindi, Tamil and English stay under 7% character error rate in both modes. Synthetic clips are clean studio speech, so real branch audio will do worse.
+- **The language hint is the biggest single lever.** Without it, Whisper often hears Hindi, Marathi, Gujarati and Bengali as a neighbouring language and writes the wrong script. The reply is then spoken in the wrong language. For real Hindi speakers the hint cuts character errors from 30.9% to 9.4%.
+- **Noise is the weak spot.** The intent survives clean speech recognition errors, but background chatter drops it to 72%. Some of those misses have under 10% character errors, which points to words from other speakers leaking into the transcript. Noise suppression before Whisper is the obvious next step.
+- **Odia is unsupported.** On 10 real Odia speakers, Whisper never identifies the language and gets 93.5% of characters wrong. Odia works for typed text only.
+- **Word error rate is high across the board** (52% with the hint on real speakers) because Indic words are long and joined. Character error rate is the fairer measure here. Full tables are in [STT_RESULTS_hint.md](backend/eval/STT_RESULTS_hint.md) and [E2E_RESULTS.md](backend/eval/E2E_RESULTS.md).
 
 ### Latency under load
 
@@ -162,7 +169,7 @@ The button reads [render.yaml](render.yaml). Render asks for your `GROQ_API_KEY`
 
 - Whisper does not support Odia, and no TTS voice exists for it. Odia text is handled, but Odia speech is not transcribed reliably and replies are text-only.
 - The non-English eval cases have not yet been reviewed by native speakers.
-- The speech-to-text numbers come from synthetic neural-TTS clips. Real branch audio, with noise and accents, will be worse. The eval accepts human recordings as soon as someone records them.
+- No real branch recordings yet. Speech is measured on real FLEURS speakers reading general text and on synthetic banking clips, with and without simulated noise. Banking-domain recordings from real customers would be the true test; the eval accepts them as soon as someone records them.
 
 ## License
 
