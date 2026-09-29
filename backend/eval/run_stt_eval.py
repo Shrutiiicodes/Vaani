@@ -18,6 +18,7 @@ Odia is skipped: Whisper has no Odia language and no TTS voice exists for it.
 """
 import argparse
 import asyncio
+import glob
 import json
 import os
 import re
@@ -48,6 +49,10 @@ def load_manifest() -> list:
     if os.path.exists(MANIFEST):
         with open(MANIFEST, encoding="utf-8") as f:
             manifest = json.load(f)
+    # Sub-datasets keep their own manifest: audio/fleurs (fetch_fleurs.py), audio/noisy_* (make_noisy.py).
+    for sub in sorted(glob.glob(os.path.join(AUDIO, "*", "manifest.json"))):
+        with open(sub, encoding="utf-8") as f:
+            manifest += json.load(f)
     return manifest + discover_human_clips({m["file"] for m in manifest})
 
 
@@ -75,7 +80,10 @@ async def synthesize(per_language: int):
     from tts import VOICES, _edge
     with open(os.path.join(HERE, "test_cases.json"), encoding="utf-8") as f:
         cases = [c for c in json.load(f) if c["source_lang"] in VOICES and not c.get("code_mixed")]
-    manifest = load_manifest()
+    manifest = []   # only the synthetic manifest file; FLEURS and human clips are listed elsewhere
+    if os.path.exists(MANIFEST):
+        with open(MANIFEST, encoding="utf-8") as f:
+            manifest = json.load(f)
     have = {m["file"] for m in manifest}
     by_lang = defaultdict(list)
     for c in cases:

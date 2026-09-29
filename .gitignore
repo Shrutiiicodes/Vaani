@@ -10,3 +10,5 @@ venv/
 data/
 .pytest_cache/
 .ruff_cache/
+backend/eval/audio/fleurs/
+backend/eval/audio/noisy_*/

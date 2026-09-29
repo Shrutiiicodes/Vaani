@@ -30,7 +30,15 @@ Results land in `RESULTS.md` and `eval_results.json` (default model, Qwen). `RES
 
 ## Speech-to-text (`run_stt_eval.py`)
 
-Clips are listed in `audio/manifest.json`. The committed clips are **synthetic**: gold sentences voiced by Microsoft neural TTS with two voices per language. Clean studio speech flatters Whisper, so treat these numbers as an upper bound. Results are always split by `source`.
+Three clip sets are scored and reported separately:
+
+| Set | What it is | How to get it |
+|---|---|---|
+| `human-fleurs` | 90 real native speakers, 10 per language including Odia, reading general Wikipedia sentences. From Google's [FLEURS](https://huggingface.co/datasets/google/fleurs) test split, CC-BY 4.0. | `python backend/eval/fetch_fleurs.py` streams only the first clips of each archive, about 54 MB. |
+| `synthetic-edge-tts` | 32 banking sentences from the test set, voiced by neural TTS with two voices per language. Clean studio audio. | Committed; `run_stt_eval.py --synthesize N` adds more |
+| `synthetic+babble-snr10dB+phone` | The same 32 banking clips with background chatter from 3 real FLEURS speakers at 10 dB SNR, band-limited to 300-3400 Hz like a phone mic. | `python backend/eval/make_noisy.py`, seeded and reproducible |
+
+FLEURS measures Whisper on real voices, but not on banking vocabulary. The synthetic sets measure banking sentences, but not real voices. Neither is a real branch recording. The FLEURS and noisy audio is not committed; both scripts regenerate it.
 
 To add real recordings, follow the checklist in [audio/human/README.md](audio/human/README.md). It gives 27 sentences with a filename for each. A clip saved as `audio/human/<language>_<case id>.<ext>` is picked up automatically, with its reference text taken from that test case.
 
@@ -42,7 +50,7 @@ python backend/eval/run_stt_eval.py --hint   # pass the known language, as the U
 python backend/eval/run_stt_eval.py --synthesize 4   # add 4 more synthetic clips per language
 ```
 
-Odia is excluded because Whisper does not support it and no TTS voice exists for it.
+Only FLEURS includes Odia. Whisper has no Odia language, so there is no hint to pass, and it cannot transcribe Odia correctly.
 
 ## Load (`load_test.py`)
 
