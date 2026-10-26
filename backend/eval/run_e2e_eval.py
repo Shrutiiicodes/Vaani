@@ -33,7 +33,8 @@ async def run(args):
     results = []
     for i, r in enumerate(rows, 1):
         case = cases[r["case_id"]]
-        out = await translate_customer_speech(r["hypothesis"] or "", r["detected"] or r["language"])
+        out = await translate_customer_speech(r["hypothesis"] or "", r["detected"] or r["language"],
+                                              from_speech=args.speech_note)
         ok = out["intent"] == case["expected_intent"]
         results.append({"source": r["source"], "language": r["language"], "case_id": case["id"],
                         "cer": r["cer"], "expected": case["expected_intent"], "predicted": out["intent"], "ok": ok})
@@ -45,7 +46,8 @@ async def run(args):
     for x in results:
         by[x["source"]].append(x)
     lines = ["# End-to-end results: audio to intent", "",
-             f"Whisper large-v3 with the language hint, then `{MODEL}`. Banking clips only; each is scored "
+             f"Transcripts from `{args.stt_results}`, then `{MODEL}`"
+             f"{' with the speech-transcript note' if args.speech_note else ''}. Banking clips only; each is scored "
              "against the intent of the test case it was voiced from.", "",
              "| Clip set | Clips | Mean CER | Intent accuracy |", "|---|---:|---:|---:|"]
     for source, xs in sorted(by.items()):
@@ -58,7 +60,7 @@ async def run(args):
                   for x in misses]
     report = "\n".join(lines) + "\n"
     print("\n" + report)
-    with open(os.path.join(HERE, "E2E_RESULTS.md"), "w", encoding="utf-8", newline="\n") as f:
+    with open(os.path.join(HERE, args.out), "w", encoding="utf-8", newline="\n") as f:
         f.write(report)
 
 
@@ -66,6 +68,8 @@ def main():
     sys.stdout.reconfigure(encoding="utf-8")
     ap = argparse.ArgumentParser(description="Audio-to-intent evaluation")
     ap.add_argument("--stt-results", default="stt_results_hint.json")
+    ap.add_argument("--speech-note", action="store_true", help="tell the LLM the text is a noisy transcript (as the app does)")
+    ap.add_argument("--out", default="E2E_RESULTS.md")
     ap.add_argument("--delay", type=float, default=9.0, help="seconds between LLM calls (Groq free tier)")
     args = ap.parse_args()
     from dotenv import load_dotenv

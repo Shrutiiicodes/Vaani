@@ -12,3 +12,4 @@ data/
 .ruff_cache/
 backend/eval/audio/fleurs/
 backend/eval/audio/noisy_*/
+backend/eval/audio/heldout_noisy_*/

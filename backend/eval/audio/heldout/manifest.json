@@ -1,0 +1,258 @@
+[
+  {
+    "language": "bengali",
+    "text": "আমার অ্যাকাউন্টে কত টাকা আছে?",
+    "voice": "bn-IN-TanishaaNeural",
+    "case_id": 36,
+    "file": "heldout/bengali_36.mp3",
+    "source": "heldout-synthetic"
+  },
+  {
+    "language": "bengali",
+    "text": "আমার একটি নতুন চেকবই দরকার",
+    "voice": "bn-IN-BashkarNeural",
+    "case_id": 39,
+    "file": "heldout/bengali_39.mp3",
+    "source": "heldout-synthetic"
+  },
+  {
+    "language": "bengali",
+    "text": "আমার দোকানের জন্য দুই লাখ টাকার মুদ্রা লোন চাই",
+    "voice": "bn-IN-TanishaaNeural",
+    "case_id": 70,
+    "file": "heldout/bengali_70.mp3",
+    "source": "heldout-synthetic"
+  },
+  {
+    "language": "bengali",
+    "text": "আমি এক বছরের জন্য পঞ্চাশ হাজার টাকার ফিক্সড ডিপোজিট করতে চাই",
+    "voice": "bn-IN-BashkarNeural",
+    "case_id": 73,
+    "file": "heldout/bengali_73.mp3",
+    "source": "heldout-synthetic"
+  },
+  {
+    "language": "english",
+    "text": "What is the balance in my account?",
+    "voice": "en-IN-NeerjaNeural",
+    "case_id": 2,
+    "file": "heldout/english_2.mp3",
+    "source": "heldout-synthetic"
+  },
+  {
+    "language": "english",
+    "text": "I want to close my current account",
+    "voice": "en-IN-PrabhatNeural",
+    "case_id": 8,
+    "file": "heldout/english_8.mp3",
+    "source": "heldout-synthetic"
+  },
+  {
+    "language": "english",
+    "text": "I need a TDS certificate for the last financial year",
+    "voice": "en-IN-NeerjaNeural",
+    "case_id": 14,
+    "file": "heldout/english_14.mp3",
+    "source": "heldout-synthetic"
+  },
+  {
+    "language": "english",
+    "text": "What time does the branch close today?",
+    "voice": "en-IN-PrabhatNeural",
+    "case_id": 130,
+    "file": "heldout/english_130.mp3",
+    "source": "heldout-synthetic"
+  },
+  {
+    "language": "gujarati",
+    "text": "મારા ખાતામાં કેટલા પૈસા છે?",
+    "voice": "gu-IN-DhwaniNeural",
+    "case_id": 55,
+    "file": "heldout/gujarati_55.mp3",
+    "source": "heldout-synthetic"
+  },
+  {
+    "language": "gujarati",
+    "text": "મારે એક વર્ષ માટે પચાસ હજાર રૂપિયાની ફિક્સ્ડ ડિપોઝિટ કરવી છે",
+    "voice": "gu-IN-NiranjanNeural",
+    "case_id": 97,
+    "file": "heldout/gujarati_97.mp3",
+    "source": "heldout-synthetic"
+  },
+  {
+    "language": "gujarati",
+    "text": "મારા ખાતામાંથી ખોટી રીતે પૈસા કપાયા છે, મારે ફરિયાદ કરવી છે",
+    "voice": "gu-IN-DhwaniNeural",
+    "case_id": 100,
+    "file": "heldout/gujarati_100.mp3",
+    "source": "heldout-synthetic"
+  },
+  {
+    "language": "gujarati",
+    "text": "મારું સરનામું બદલાયું છે, કેવાયસી અપડેટ કરવું છે",
+    "voice": "gu-IN-NiranjanNeural",
+    "case_id": 103,
+    "file": "heldout/gujarati_103.mp3",
+    "source": "heldout-synthetic"
+  },
+  {
+    "language": "hindi",
+    "text": "मेरे खाते में कितने पैसे हैं?",
+    "voice": "hi-IN-SwaraNeural",
+    "case_id": 17,
+    "file": "heldout/hindi_17.mp3",
+    "source": "heldout-synthetic"
+  },
+  {
+    "language": "hindi",
+    "text": "मुझे अपना खाता बंद करना है",
+    "voice": "hi-IN-MadhurNeural",
+    "case_id": 23,
+    "file": "heldout/hindi_23.mp3",
+    "source": "heldout-synthetic"
+  },
+  {
+    "language": "hindi",
+    "text": "मुझे अपने खाते में दस हजार रुपये जमा करने हैं",
+    "voice": "hi-IN-SwaraNeural",
+    "case_id": 138,
+    "file": "heldout/hindi_138.mp3",
+    "source": "heldout-synthetic"
+  },
+  {
+    "language": "hindi",
+    "text": "मेरी बेटी को नॉमिनी बनाना है",
+    "voice": "hi-IN-MadhurNeural",
+    "case_id": 144,
+    "file": "heldout/hindi_144.mp3",
+    "source": "heldout-synthetic"
+  },
+  {
+    "language": "kannada",
+    "text": "ನನ್ನ ಖಾತೆಯಲ್ಲಿ ಎಷ್ಟು ಹಣ ಇದೆ?",
+    "voice": "kn-IN-SapnaNeural",
+    "case_id": 51,
+    "file": "heldout/kannada_51.mp3",
+    "source": "heldout-synthetic"
+  },
+  {
+    "language": "kannada",
+    "text": "ನಾನು ಮೂರು ವರ್ಷಕ್ಕೆ ಎರಡು ಲಕ್ಷ ರೂಪಾಯಿ ಠೇವಣಿ ಇಡಬೇಕು",
+    "voice": "kn-IN-GaganNeural",
+    "case_id": 89,
+    "file": "heldout/kannada_89.mp3",
+    "source": "heldout-synthetic"
+  },
+  {
+    "language": "kannada",
+    "text": "ನನಗೆ ಕಿಸಾನ್ ಕ್ರೆಡಿಟ್ ಕಾರ್ಡ್ ಬೇಕು",
+    "voice": "kn-IN-SapnaNeural",
+    "case_id": 92,
+    "file": "heldout/kannada_92.mp3",
+    "source": "heldout-synthetic"
+  },
+  {
+    "language": "kannada",
+    "text": "ನನ್ನ ಮಗಳನ್ನು ನಾಮಿನಿಯಾಗಿ ಸೇರಿಸಬೇಕು",
+    "voice": "kn-IN-GaganNeural",
+    "case_id": 95,
+    "file": "heldout/kannada_95.mp3",
+    "source": "heldout-synthetic"
+  },
+  {
+    "language": "marathi",
+    "text": "माझ्या खात्यात किती पैसे आहेत?",
+    "voice": "mr-IN-AarohiNeural",
+    "case_id": 31,
+    "file": "heldout/marathi_31.mp3",
+    "source": "heldout-synthetic"
+  },
+  {
+    "language": "marathi",
+    "text": "मला नवीन चेकबुक हवे आहे",
+    "voice": "mr-IN-ManoharNeural",
+    "case_id": 34,
+    "file": "heldout/marathi_34.mp3",
+    "source": "heldout-synthetic"
+  },
+  {
+    "language": "marathi",
+    "text": "माझ्या खात्यातून पैसे कापले गेले पण एटीएममधून पैसे आले नाहीत, मला तक्रार करायची आहे",
+    "voice": "mr-IN-AarohiNeural",
+    "case_id": 63,
+    "file": "heldout/marathi_63.mp3",
+    "source": "heldout-synthetic"
+  },
+  {
+    "language": "marathi",
+    "text": "माझे डेबिट कार्ड हरवले आहे, ते ब्लॉक करा",
+    "voice": "mr-IN-ManoharNeural",
+    "case_id": 66,
+    "file": "heldout/marathi_66.mp3",
+    "source": "heldout-synthetic"
+  },
+  {
+    "language": "tamil",
+    "text": "என் கணக்கில் எவ்வளவு பணம் இருக்கிறது?",
+    "voice": "ta-IN-PallaviNeural",
+    "case_id": 41,
+    "file": "heldout/tamil_41.mp3",
+    "source": "heldout-synthetic"
+  },
+  {
+    "language": "tamil",
+    "text": "நான் என் கணக்கை மூட விரும்புகிறேன்",
+    "voice": "ta-IN-ValluvarNeural",
+    "case_id": 44,
+    "file": "heldout/tamil_44.mp3",
+    "source": "heldout-synthetic"
+  },
+  {
+    "language": "tamil",
+    "text": "என் கணக்கில் தவறாக பணம் பிடிக்கப்பட்டது, புகார் செய்ய வேண்டும்",
+    "voice": "ta-IN-PallaviNeural",
+    "case_id": 77,
+    "file": "heldout/tamil_77.mp3",
+    "source": "heldout-synthetic"
+  },
+  {
+    "language": "tamil",
+    "text": "என் மனைவியை நாமினியாக சேர்க்க வேண்டும்",
+    "voice": "ta-IN-ValluvarNeural",
+    "case_id": 80,
+    "file": "heldout/tamil_80.mp3",
+    "source": "heldout-synthetic"
+  },
+  {
+    "language": "telugu",
+    "text": "నా ఖాతాలో ఎంత డబ్బు ఉంది?",
+    "voice": "te-IN-ShrutiNeural",
+    "case_id": 46,
+    "file": "heldout/telugu_46.mp3",
+    "source": "heldout-synthetic"
+  },
+  {
+    "language": "telugu",
+    "text": "నాకు కొత్త చెక్ బుక్ కావాలి",
+    "voice": "te-IN-MohanNeural",
+    "case_id": 49,
+    "file": "heldout/telugu_49.mp3",
+    "source": "heldout-synthetic"
+  },
+  {
+    "language": "telugu",
+    "text": "నా వ్యాపారానికి ముద్రా లోన్ కావాలి",
+    "voice": "te-IN-ShrutiNeural",
+    "case_id": 84,
+    "file": "heldout/telugu_84.mp3",
+    "source": "heldout-synthetic"
+  },
+  {
+    "language": "telugu",
+    "text": "నా చెక్ క్లియర్ కాలేదు, నేను ఫిర్యాదు చేయాలి",
+    "voice": "te-IN-MohanNeural",
+    "case_id": 87,
+    "file": "heldout/telugu_87.mp3",
+    "source": "heldout-synthetic"
+  }
+]

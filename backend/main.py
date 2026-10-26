@@ -17,7 +17,7 @@ from sqlalchemy.orm import Session
 
 import crud
 from auth import DUMMY_HASH, check_password, create_access_token, require_admin, revoke_token, verify_token
-from banking_context import BANK_NAME, COUNTERS, FD_SLABS, FORM_TEMPLATES, LANGUAGES, LOAN_RATES
+from banking_context import ASR_VOCAB, BANK_NAME, COUNTERS, FD_SLABS, FORM_TEMPLATES, LANGUAGES, LOAN_RATES
 from database import SessionLocal, init_db
 from models import SESSION_ID, LoginRequest, StaffCreate, StaffReplyRequest, SummaryRequest
 from stt import transcribe_audio
@@ -185,7 +185,9 @@ async def _customer_turn(request_id: str, audio_bytes: bytes, filename: str, ses
     start = time.perf_counter()
     try:
         t = time.perf_counter()
-        stt = await transcribe_audio(audio_bytes, filename, language_hint)
+        # With a known language, bias Whisper toward that language's banking terms.
+        hint_name = next((name for name, code in LANGUAGES.items() if code == language_hint), None)
+        stt = await transcribe_audio(audio_bytes, filename, language_hint, ASR_VOCAB.get(hint_name))
         timings["stt_ms"] = _ms(t)
         lang = stt["language"] or "hindi"
         text = stt["text"] or ""
@@ -198,7 +200,7 @@ async def _customer_turn(request_id: str, audio_bytes: bytes, filename: str, ses
             history = crud.get_turns(db, session_id)
 
         t = time.perf_counter()
-        data = await translate_customer_speech(text, lang, history, active_form)
+        data = await translate_customer_speech(text, lang, history, active_form, from_speech=True)
         timings["llm_ms"] = _ms(t)
         counter = data.get("suggested_counter") or "inquiry_desk"
         yield _sse("analysis", {

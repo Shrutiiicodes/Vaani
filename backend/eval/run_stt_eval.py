@@ -117,7 +117,7 @@ async def synthesize(per_language: int):
 async def evaluate(args):
     import jiwer
 
-    from banking_context import LANGUAGES
+    from banking_context import ASR_VOCAB, LANGUAGES
     from stt import transcribe_audio
 
     manifest = load_manifest()
@@ -125,12 +125,15 @@ async def evaluate(args):
         raise SystemExit("No clips. Record some (see docstring) or run with --synthesize N.")
 
     rows = []
+    if args.only:
+        manifest = [m for m in manifest if m["source"].startswith(args.only)]
     for i, m in enumerate(manifest, 1):
         with open(os.path.join(AUDIO, m["file"]), "rb") as f:
             audio = f.read()
         hint = LANGUAGES.get(m["language"]) if args.hint else None
         try:
-            out = await transcribe_audio(audio, os.path.basename(m["file"]), hint)
+            prompt = ASR_VOCAB.get(m["language"]) if args.vocab and hint else None
+            out = await transcribe_audio(audio, os.path.basename(m["file"]), hint, prompt)
         except Exception as e:
             print(f"[{i}/{len(manifest)}] {m['file']} ERROR {str(e)[:150]}")
             await asyncio.sleep(args.delay * 3)
@@ -147,7 +150,7 @@ async def evaluate(args):
     groups = defaultdict(list)
     for r in rows:
         groups[(r["source"], r["language"])].append(r)
-    mode = "language hint" if args.hint else "auto-detect"
+    mode = ("language hint" if args.hint else "auto-detect") + (" + banking vocabulary prompt" if args.vocab else "")
     lines = ["# Speech-to-text results", "",
              f"Groq `whisper-large-v3`, {mode}, {len(rows)} clips. WER and CER are averaged per clip.",
              "Synthetic clips are clean neural-TTS speech and overstate real-world accuracy.", ""]
@@ -165,7 +168,7 @@ async def evaluate(args):
         lines.append("")
     report = "\n".join(lines)
     print("\n" + report)
-    suffix = "_hint" if args.hint else ""
+    suffix = ("_hint" if args.hint else "") + ("_vocab" if args.vocab else "") + (f"_{args.only}" if args.only else "")
     with open(os.path.join(HERE, f"STT_RESULTS{suffix}.md"), "w", encoding="utf-8", newline="\n") as f:
         f.write(report)
     with open(os.path.join(HERE, f"stt_results{suffix}.json"), "w", encoding="utf-8", newline="\n") as f:
@@ -177,6 +180,8 @@ def main():
     ap = argparse.ArgumentParser(description="Whisper STT evaluation")
     ap.add_argument("--synthesize", type=int, metavar="N", help="first add N synthetic clips per language")
     ap.add_argument("--hint", action="store_true", help="pass the known language to Whisper")
+    ap.add_argument("--vocab", action="store_true", help="with --hint, also prompt Whisper with banking terms (as the app does)")
+    ap.add_argument("--only", help="only clip sets whose source starts with this, e.g. heldout")
     ap.add_argument("--delay", type=float, default=3.0, help="seconds between calls (Whisper free tier: 20/min)")
     args = ap.parse_args()
 

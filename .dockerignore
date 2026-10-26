@@ -12,3 +12,4 @@ venv/
 backend/eval/audio/
 backend/eval/audio/fleurs/
 backend/eval/audio/noisy_*/
+backend/eval/audio/heldout_noisy_*/
