@@ -7,6 +7,8 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-005571?logo=fastapi)](https://fastapi.tiangolo.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
+**Live demo: [vaani-yftu.onrender.com](https://vaani-yftu.onrender.com)**. It runs on Render's free plan, so the first visit after a quiet spell takes about a minute to wake up. Ask the author for a demo login.
+
 ![A Hindi home-loan request: transcript streams in, then intent, EMI, routing, pre-filled form and checklist; the staff reply is spoken back in Hindi](docs/demo.gif)
 
 *A real recorded turn: Groq Whisper and Qwen, no mocks. Recorded with `docs/record_demo.py`.*
