@@ -140,3 +140,9 @@ def test_parse_garbage_falls_back_to_source_text():
 
 def test_parse_non_object_json_falls_back():
     assert parse_llm_output("[1, 2]", "x")["intent"] == "other"
+
+
+def test_speech_note_only_for_transcripts():
+    from translate import SPEECH_NOTE, build_prompt
+    assert SPEECH_NOTE not in build_prompt("x", "hindi", None, None)
+    assert SPEECH_NOTE in build_prompt("x", "hindi", None, None, from_speech=True)

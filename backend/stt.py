@@ -12,12 +12,14 @@ _CODE_TO_NAME = {code: name for name, code in LANGUAGES.items()}
 
 
 async def transcribe_audio(audio_bytes: bytes, filename: str = "audio.webm",
-                           language: str | None = None) -> dict:
+                           language: str | None = None, prompt: str | None = None) -> dict:
     """Transcribe with Groq Whisper. `language` is an optional ISO-639-1 hint.
 
     Returns {"text", "language"} where language is a lowercase name like "hindi".
     """
     kwargs = {"language": language} if language else {}
+    if prompt:
+        kwargs["prompt"] = prompt   # biases decoding toward these words
     response = await client.audio.transcriptions.create(
         model="whisper-large-v3",
         file=(filename, audio_bytes),       # extension tells Whisper the container format

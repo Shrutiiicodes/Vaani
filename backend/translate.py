@@ -208,7 +208,15 @@ async def _chat(messages: list, json_mode: bool = False, temperature: float = 0.
     return response.choices[0].message.content or ""
 
 
-def build_prompt(text: str, source_lang: str, history: list | None, active_form: str | None) -> str:
+SPEECH_NOTE = """
+This text is a speech-recognition transcript from a busy branch counter. Words may be misheard,
+split or misspelled, especially banking terms and product names (KYC, FD, Mudra, nominee, TDS, PIN).
+Read it phonetically: infer the most likely banking request from words that sound similar,
+and translate what the customer most likely said rather than the garbled surface text."""
+
+
+def build_prompt(text: str, source_lang: str, history: list | None, active_form: str | None,
+                 from_speech: bool = False) -> str:
     convo_context = ""
     turns = [t for t in (history or []) if t.get("text")][-HISTORY_TURNS:]
     if turns:
@@ -222,7 +230,7 @@ def build_prompt(text: str, source_lang: str, history: list | None, active_form:
                          f"using these exact keys: {', '.join(FORM_TEMPLATES[active_form])}")
 
     return f"""
-The customer is speaking in {source_lang}.
+The customer is speaking in {source_lang}.{SPEECH_NOTE if from_speech else ""}
 Customer said: "{text}"
 {convo_context}
 {target_fields}
@@ -262,8 +270,8 @@ Respond with a single JSON object:
 
 
 async def translate_customer_speech(text: str, source_lang: str, conversation_history: list | None = None,
-                                    active_form_type: str | None = None) -> dict:
-    prompt = build_prompt(text, source_lang, conversation_history, active_form_type)
+                                    active_form_type: str | None = None, from_speech: bool = False) -> dict:
+    prompt = build_prompt(text, source_lang, conversation_history, active_form_type, from_speech)
     raw = await _chat(
         [{"role": "system", "content": BANKING_SYSTEM_PROMPT}, {"role": "user", "content": prompt}],
         json_mode=True,

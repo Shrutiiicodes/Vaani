@@ -27,7 +27,8 @@ def client():
 def fake_ai(monkeypatch):
     state = {"llm": json.dumps(LLM_RESULT)}
 
-    async def fake_stt(audio, filename="audio.webm", language=None):
+    async def fake_stt(audio, filename="audio.webm", language=None, prompt=None):
+        state["stt_prompt"] = prompt
         return {"text": "mujhe 5 lakh ka home loan chahiye 20 saal ke liye", "language": "hindi"}
 
     async def fake_chat(messages, json_mode=False, temperature=0.1):
@@ -143,6 +144,14 @@ def test_rejects_oversized_upload(client):
     r = client.post("/api/customer-speak", headers=auth(client), data={"session_id": str(uuid.uuid4())},
                     files={"audio": ("big.webm", b"0" * (main.MAX_AUDIO_BYTES + 1), "audio/webm")})
     assert r.status_code == 413
+
+
+def test_language_hint_sends_banking_vocabulary_to_whisper(client, fake_ai):
+    from banking_context import ASR_VOCAB
+    speak(client, auth(client), str(uuid.uuid4()), language="hi")
+    assert fake_ai["stt_prompt"] == ASR_VOCAB["hindi"]
+    speak(client, auth(client), str(uuid.uuid4()))          # auto-detect: no vocabulary to pick
+    assert fake_ai["stt_prompt"] is None
 
 
 def test_rejects_bad_language_hint_and_session_id(client):

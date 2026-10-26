@@ -7,6 +7,8 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-005571?logo=fastapi)](https://fastapi.tiangolo.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
+**Live demo: [vaani-yftu.onrender.com](https://vaani-yftu.onrender.com)**. It runs on Render's free plan, so the first visit after a quiet spell takes about a minute to wake up. Ask the author for a demo login.
+
 ![A Hindi home-loan request: transcript streams in, then intent, EMI, routing, pre-filled form and checklist; the staff reply is spoken back in Hindi](docs/demo.gif)
 
 *A real recorded turn: Groq Whisper and Qwen, no mocks. Recorded with `docs/record_demo.py`.*
@@ -70,6 +72,7 @@ This uses three clip sets. The first is 80 real native speakers from Google's [F
 
 - **The language hint is the biggest single lever.** Without it, Whisper often hears Hindi, Marathi, Gujarati and Bengali as a neighbouring language and writes the wrong script. The reply is then spoken in the wrong language. For real Hindi speakers the hint cuts character errors from 30.9% to 9.4%.
 - **Noise is the weak spot.** The intent survives clean speech recognition errors, but background chatter drops it to 72%. Some of those misses have under 10% character errors, which points to words from other speakers leaking into the transcript. Noise suppression before Whisper is the obvious next step.
+- **Noise fix, in progress.** The live app now prompts Whisper with banking terms in each language, and tells the LLM its input is a possibly misheard transcript. On the 32 noisy tuning clips, audio-to-intent accuracy rose from 72% to 88%, while clean audio stayed at 97%. On 32 held-out clips, the vocabulary prompt cut character errors only slightly, from 21.1% to 20.7% in noise and from 7.2% to 6.0% clean. The held-out intent check is still pending.
 - **Odia is unsupported.** On 10 real Odia speakers, Whisper never identifies the language and gets 93.5% of characters wrong. Odia works for typed text only.
 - **Word error rate is high across the board** (52% with the hint on real speakers) because Indic words are long and joined. Character error rate is the fairer measure here. Full tables are in [STT_RESULTS_hint.md](backend/eval/STT_RESULTS_hint.md) and [E2E_RESULTS.md](backend/eval/E2E_RESULTS.md).
 
